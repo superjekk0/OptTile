@@ -7,6 +7,8 @@
 #ifndef PCH_H
 #define PCH_H
 
+#define NOMINMAX
+
 // ajouter les en-têtes à précompiler ici
 #include "framework.h"
 
