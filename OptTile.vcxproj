@@ -144,10 +144,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\backup\LoadException.h" />
+    <ClInclude Include="..\backup\Tile.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="OptTile.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Tile.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\backup\LoadException.cpp" />
