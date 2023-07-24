@@ -14,7 +14,7 @@ namespace opt
 {
 	class OPTTILE_API Level : public sf::Drawable {
 		private:
-			std::vector<std::shared_ptr<Tile>> m_tiles;
+			std::vector<std::unique_ptr<Tile>> m_tiles;
 			sf::Texture m_texture;						// Texture utilisée pour toutes les cases
 			//std::size_t m_nbTexture;					// Indique le nombre de sous-textures dans le fichier
 			std::vector<std::size_t> m_beginTileIndex;	// Indique l'index de commencement des sommets de chaque tuile
@@ -50,7 +50,13 @@ namespace opt
 			/// Retourne une référence de la case à l'index spécifié
 			/// </summary>
 			/// <param name="index">Index de la tuile</param>
-			std::shared_ptr<opt::Tile> operator[](int index);
+			opt::Tile* const operator[](int index);
+
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="other"></param>
+			opt::Level& operator=(opt::Level&& other) noexcept;
 		
 			/// <summary>
 			/// Dessine le niveau sur l'élément SFML cible
@@ -189,7 +195,7 @@ namespace opt
 			/// <param name="index">Index de l'objet à vérifier</param>
 			/// <returns>Si null, l'objet à l'index spécifié n'est pas de ce type</returns>
 			template <class T>
-			std::shared_ptr<T> derivedPointer(int index);
+			T* const derivedPointer(int index);
 		
 			/// <summary>
 			/// Retourne une référence constante de la texture utilisée dans le niveau
@@ -248,9 +254,9 @@ namespace opt
 	};
 
 	template <class T>
-	inline std::shared_ptr<T> opt::Level::derivedPointer(int index)
+	inline T* const opt::Level::derivedPointer(int index)
 	{
-		return std::dynamic_pointer_cast<T>(m_tiles[index]);
+		return dynamic_cast<T*>(m_tiles[index].get());
 	}
 }
 

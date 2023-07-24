@@ -75,9 +75,18 @@ inline opt::Level::Level(const std::string& pPathTexture, std::size_t pNbTexture
 	}
 }
 
-inline std::shared_ptr<opt::Tile> opt::Level::operator[](int index)
+inline opt::Tile* const opt::Level::operator[](int index)
 {
-	return m_tiles[index];
+	return m_tiles[index].get();
+}
+
+opt::Level& opt::Level::operator=(opt::Level&& other) noexcept
+{
+	if (this != &other)
+	{
+		m_tiles = std::move(other.m_tiles);
+	}
+	return *this;
 }
 
 inline void opt::Level::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -264,7 +273,7 @@ inline void opt::Level::resetTiles()
 
 inline void opt::Level::add(const opt::Tile& tile)
 {
-	m_tiles.push_back(std::make_shared<opt::Tile>(tile));
+	m_tiles.push_back(tile.clone());
 	m_beginTileIndex.push_back(m_vertexes.size());
 	for (const sf::Vertex& sommet : tile.vertexes())
 		m_vertexes.push_back(sommet);
@@ -272,7 +281,7 @@ inline void opt::Level::add(const opt::Tile& tile)
 
 inline void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule)
 {
-	m_tiles.push_back(std::make_shared<opt::Tile>(m_texture, numberSubTexture, size, position, textureRule, m_subTextures));
+	m_tiles.push_back(std::make_unique<opt::Tile>(m_texture, numberSubTexture, size, position, textureRule, m_subTextures));
 	m_beginTileIndex.push_back(m_vertexes.size());
 	for (const sf::Vertex& sommet : m_tiles[m_tiles.size() - 1]->vertexes())
 		m_vertexes.push_back(sommet);
@@ -280,7 +289,7 @@ inline void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& positi
 
 inline void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule, const sf::Vector2f& scale)
 {
-	m_tiles.push_back(std::make_shared<opt::Tile>(m_texture, numberSubTexture, size, position, textureRule, scale, m_subTextures));
+	m_tiles.push_back(std::make_unique<opt::Tile>(m_texture, numberSubTexture, size, position, textureRule, scale, m_subTextures));
 	m_beginTileIndex.push_back(m_vertexes.size());
 	for (const sf::Vertex& sommet : m_tiles[m_tiles.size() - 1]->vertexes())
 		m_vertexes.push_back(sommet);
