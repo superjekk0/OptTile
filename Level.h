@@ -50,7 +50,7 @@ namespace opt
 			/// Retourne une référence de la case à l'index spécifié
 			/// </summary>
 			/// <param name="index">Index de la tuile</param>
-			auto& operator[](int index);
+			std::shared_ptr<opt::Tile> operator[](int index);
 		
 			/// <summary>
 			/// Dessine le niveau sur l'élément SFML cible
