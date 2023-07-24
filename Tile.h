@@ -74,12 +74,6 @@ namespace opt
 		Tile(const sf::Texture& texture, int noTuileDebutTexture, const sf::Vector2f& desiredSize, const sf::Vector2f& position, TextureRule textureRule, const sf::Vector2f& scale, const std::vector<sf::FloatRect>& subTextures);
 
 		/// <summary>
-		/// Réassigne la tuile avec les informations de l'autre tuile
-		/// </summary>
-		/// <param name="other">Tuile à réassigner</param>
-		Tile& operator=(const Tile& other);
-
-		/// <summary>
 		/// Retourne une référence de la liste générique de sommets (pour pouvoir tout dessiner en un appel de la méthode draw)
 		/// </summary>
 		const std::vector<sf::Vertex>& vertexes() const;

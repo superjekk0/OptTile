@@ -198,7 +198,7 @@ inline bool opt::Level::loadTexture(const std::string& path, const std::string& 
 		std::getline(fichier, lignes[i]);
 	}
 	if (lignes.empty())
-		throw "No data was within the file";
+		throw opt::LoadException(subTexturePath);
 	if (lignes[lignes.size() - 1] == "")
 		lignes.pop_back();
 	m_subTextures.resize(lignes.size());
@@ -267,6 +267,8 @@ inline void opt::Level::loadTexture(const sf::Texture& texture, const std::strin
 
 inline void opt::Level::resetTiles()
 {
+	for (auto& tuile : m_tiles)
+		tuile.release();
 	m_tiles.resize(0);
 	m_vertexes.resize(0);
 }
