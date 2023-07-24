@@ -27,6 +27,9 @@
     <ClInclude Include="OptTile.h">
       <Filter>Fichiers sources</Filter>
     </ClInclude>
+    <ClInclude Include="..\backup\LoadException.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -36,6 +39,9 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Tile.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\backup\LoadException.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
