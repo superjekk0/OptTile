@@ -21,16 +21,16 @@
     <ClInclude Include="pch.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="..\backup\LoadException.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="..\backup\Tile.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="OptTile.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="..\backup\Level.h">
+    <ClInclude Include="Level.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadException.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Tile.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
@@ -44,10 +44,10 @@
     <ClCompile Include="Tile.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\backup\LoadException.cpp">
+    <ClCompile Include="Level.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\backup\Level.cpp">
+    <ClCompile Include="LoadException.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

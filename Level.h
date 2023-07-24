@@ -14,7 +14,7 @@ namespace opt
 {
 	class OPTTILE_API Level : public sf::Drawable {
 		private:
-			std::vector<std::unique_ptr<Tile>> m_tiles;
+			std::vector<std::shared_ptr<Tile>> m_tiles;
 			sf::Texture m_texture;						// Texture utilisée pour toutes les cases
 			//std::size_t m_nbTexture;					// Indique le nombre de sous-textures dans le fichier
 			std::vector<std::size_t> m_beginTileIndex;	// Indique l'index de commencement des sommets de chaque tuile

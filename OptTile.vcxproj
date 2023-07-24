@@ -143,17 +143,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\backup\Level.h" />
-    <ClInclude Include="..\backup\LoadException.h" />
-    <ClInclude Include="..\backup\Tile.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Level.h" />
+    <ClInclude Include="LoadException.h" />
     <ClInclude Include="OptTile.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Tile.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\backup\Level.cpp" />
-    <ClCompile Include="..\backup\LoadException.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Level.cpp" />
+    <ClCompile Include="LoadException.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -75,7 +75,7 @@ inline opt::Level::Level(const std::string& pPathTexture, std::size_t pNbTexture
 	}
 }
 
-inline auto& opt::Level::operator[](int index)
+inline std::shared_ptr<opt::Tile> opt::Level::operator[](int index)
 {
 	return m_tiles[index];
 }
