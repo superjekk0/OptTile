@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\backup\Level.h" />
     <ClInclude Include="..\backup\LoadException.h" />
     <ClInclude Include="..\backup\Tile.h" />
     <ClInclude Include="framework.h" />
@@ -150,6 +151,7 @@
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\backup\Level.cpp" />
     <ClCompile Include="..\backup\LoadException.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="pch.cpp">
