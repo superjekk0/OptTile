@@ -364,7 +364,7 @@ inline opt::Tile* opt::Tile::getThis()
 	return this;
 }
 
-inline std::unique_ptr<opt::Tile> opt::Tile::clone() const
+inline std::shared_ptr<opt::Tile> opt::Tile::clone() const
 {
 	return std::make_unique<opt::Tile>(*this);
 }

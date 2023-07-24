@@ -189,7 +189,7 @@ namespace opt
 			/// <param name="index">Index de l'objet à vérifier</param>
 			/// <returns>Si null, l'objet à l'index spécifié n'est pas de ce type</returns>
 			template <class T>
-			T* derivedPointer(int index);
+			std::shared_ptr<T> derivedPointer(int index);
 		
 			/// <summary>
 			/// Retourne une référence constante de la texture utilisée dans le niveau
@@ -246,6 +246,12 @@ namespace opt
 			/// <returns></returns>
 			std::size_t size() const;
 	};
+
+	template <class T>
+	inline std::shared_ptr<T> opt::Level::derivedPointer(int index)
+	{
+		return std::dynamic_pointer_cast<T>(m_tiles[index]);
+	}
 }
 
 #endif

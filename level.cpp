@@ -264,7 +264,7 @@ inline void opt::Level::resetTiles()
 
 inline void opt::Level::add(const opt::Tile& tile)
 {
-	m_tiles.push_back(std::move(tile.clone()));
+	m_tiles.push_back(std::make_shared<opt::Tile>(tile));
 	m_beginTileIndex.push_back(m_vertexes.size());
 	for (const sf::Vertex& sommet : tile.vertexes())
 		m_vertexes.push_back(sommet);
@@ -272,26 +272,18 @@ inline void opt::Level::add(const opt::Tile& tile)
 
 inline void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule)
 {
-	auto tuile{ std::make_unique<opt::Tile>(m_texture, numberSubTexture, size, position, textureRule, m_subTextures) };
-	m_tiles.push_back(std::move(tuile));
+	m_tiles.push_back(std::make_shared<opt::Tile>(m_texture, numberSubTexture, size, position, textureRule, m_subTextures));
 	m_beginTileIndex.push_back(m_vertexes.size());
-	for (const sf::Vertex& sommet : tuile->vertexes())
+	for (const sf::Vertex& sommet : m_tiles[m_tiles.size() - 1]->vertexes())
 		m_vertexes.push_back(sommet);
 }
 
 inline void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule, const sf::Vector2f& scale)
 {
-	auto tuile{ std::make_unique<opt::Tile>(m_texture, numberSubTexture, size, position, textureRule, scale, m_subTextures) };
-	m_tiles.push_back(std::move(tuile));
+	m_tiles.push_back(std::make_shared<opt::Tile>(m_texture, numberSubTexture, size, position, textureRule, scale, m_subTextures));
 	m_beginTileIndex.push_back(m_vertexes.size());
-	for (const sf::Vertex& sommet : tuile->vertexes())
+	for (const sf::Vertex& sommet : m_tiles[m_tiles.size() - 1]->vertexes())
 		m_vertexes.push_back(sommet);
-}
-
-template <class T>
-inline T* opt::Level::derivedPointer(int index)
-{
-	return dynamic_cast<T*>(m_tiles[index].get());
 }
 
 inline const sf::Texture& opt::Level::getTexture() const

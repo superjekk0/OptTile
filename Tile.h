@@ -244,7 +244,7 @@ namespace opt
 		/// <summary>
 		/// Crée un clone de l'objet pouvant contenir tous les champs de classe dérivée quelconque. Pour pouvoir permettre le clonage de classe dérivée, il faut surcharger cette méthode
 		/// </summary>
-		virtual std::unique_ptr<Tile> clone() const;
+		virtual std::shared_ptr<Tile> clone() const;
 
 		/// <summary>
 		/// Donne la hauteur de la sous-texture (utile si on veut limiter une tuile à une fois sa hauteur)
