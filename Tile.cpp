@@ -349,8 +349,6 @@ inline void opt::Tile::move(float offsetX, float offsetY)
 
 inline void opt::Tile::setPosition(const sf::Vector2f& position)
 {
-	//m_position = position;
-	// intializeVertexes();
 	sf::Vector2f deplacement{position - m_position};
 	m_position = position;
 	for (auto& sommet : m_vertexes)

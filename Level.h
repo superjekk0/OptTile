@@ -79,6 +79,21 @@ namespace opt
 			/// <param name="offset">Mouvement à effectuer</param>
 			/// <param name="index">Index de la tuile</param>
 			void move(const sf::Vector2f& offset, std::size_t index);
+
+			/// <summary>
+			/// Bouge la tuile spécifiée par l'index à la position indiquée en paramètre, puis met à jour les sommets
+			/// </summary>
+			/// <param name="x">Nouvelle position horizontale</param>
+			/// <param name="y">Nouvelle position verticale</param>
+			/// <param name="index">Index de la tuile</param>
+			void setPosition(float x, float y, std::size_t index);
+
+			/// <summary>
+			/// Bouge la tuile spécifiée par l'index à la position indiquée en paramètre, puis met à jour les sommets
+			/// </summary>
+			/// <param name="position">Nouvelle position de la tuile</param>
+			/// <param name="">Index de la tuile</param>
+			void setPosition(const sf::Vector2f& position, std::size_t index);
 		
 			/// <summary>
 			/// Permet de redimensionner la tuile et met à jour les sommets pour faire le rendu
