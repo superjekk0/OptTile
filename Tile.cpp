@@ -7,6 +7,21 @@ inline void opt::Tile::intializeVertexes()
 	sf::Vector2f coinGaucheSommet;
 	m_vertexes.resize(6);
 	std::size_t indexSommet{ 0 };
+
+	if (!m_texture || !m_subTextures)
+	{
+		m_textureRule = TextureRule::fill_space;
+		m_vertexes[0].position = m_position;
+		m_vertexes[1].position = m_position + sf::Vector2f(0.f, m_tileSize.y);
+		m_vertexes[2].position = m_position + sf::Vector2f(m_tileSize.x, 0.f);
+		m_vertexes[3].position = m_vertexes[1].position;
+		m_vertexes[4].position = m_vertexes[2].position;
+		m_vertexes[5].position = m_position + m_tileSize;
+		for (auto& sommet : m_vertexes)
+			sommet.color = m_color;
+		return;
+	}
+
 	sf::Vector2f textureSize{m_subTextures->at(m_numberSubTexture).width, m_subTextures->at(m_numberSubTexture).height};
 	sf::Vector2f texturePosition{m_subTextures->at(m_numberSubTexture).left, m_subTextures->at(m_numberSubTexture).top};
 
