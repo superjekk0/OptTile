@@ -339,23 +339,23 @@ inline void opt::Level::changeTextureRect(int numberTexture, int index)
 	reloadVertexes();
 }
 
-inline void opt::Level::changeColor(const sf::Color& color, int index)
+inline void opt::Level::changeColour(const sf::Color& color, int index)
 {
-	m_tiles[index]->changeColor(color);
+	m_tiles[index]->changeColour(color);
 	for (std::size_t i{ m_beginTileIndex[index] }; continueUpdate(static_cast<std::size_t>(index), i); ++i)
 		m_vertexes[i].color = color;
 }
 
-inline void opt::Level::resetColor(int index)
+inline void opt::Level::resetColour(int index)
 {
-	m_tiles[index]->resetColor();
+	m_tiles[index]->resetColour();
 	for (std::size_t i{ m_beginTileIndex[index] }; continueUpdate(static_cast<std::size_t>(index), i); ++i)
 		m_vertexes[i].color = sf::Color(0xFFFFFFFF);
 }
 
-inline sf::Color opt::Level::getColor(int index) const
+inline sf::Color opt::Level::getColour(int index) const
 {
-	return m_tiles[index]->getColor();
+	return m_tiles[index]->getColour();
 }
 
 inline sf::FloatRect opt::Level::getSubTexture(int index) const

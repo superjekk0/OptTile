@@ -230,19 +230,19 @@ namespace opt
 			/// </summary>
 			/// <param name="color">New tile color (to apply a colour effect)</param>
 			/// <param name="index">Tile index</param>
-			void changeColor(const sf::Color& color, int index);
+			void changeColour(const sf::Color& color, int index);
 		
 			/// <summary>
 			/// Resets the vertexes' colour of the tile (gets back to colour 0xFFFFFFFF)
 			/// </summary>
 			/// <param name="index">Tile index</param>
-			void resetColor(int index);
+			void resetColour(int index);
 		
 			/// <summary>
 			/// Returns tile's colour
 			/// </summary>
 			/// <param name="index">Tile index</param>
-			sf::Color getColor(int index) const;
+			sf::Color getColour(int index) const;
 		
 			/// <summary>
 			/// Returns the subtexture rectangle indicated by the index

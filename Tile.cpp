@@ -397,21 +397,21 @@ inline sf::Vector2f opt::Tile::subTextureSize() const
 	return sf::Vector2f(m_subTextures->at(m_numberSubTexture).width, m_subTextures->at(m_numberSubTexture).height);
 }
 
-inline void opt::Tile::changeColor(const sf::Color& color)
+inline void opt::Tile::changeColour(const sf::Color& color)
 {
 	m_color = color;
 	for (auto& sommet : m_vertexes)
 		sommet.color = m_color;
 }
 
-inline void opt::Tile::resetColor()
+inline void opt::Tile::resetColour()
 {
 	m_color = sf::Color(0xFFFFFFFF);
 	for (auto& sommet : m_vertexes)
 		sommet.color = m_color;
 }
 
-inline sf::Color opt::Tile::getColor() const
+inline sf::Color opt::Tile::getColour() const
 {
 	return m_color;
 }
