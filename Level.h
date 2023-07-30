@@ -45,7 +45,7 @@ namespace opt
 			/// Constructeur par défaut. Utile lors de la création d'une structure contenant un niveau
 			/// </summary>
 			Level();
-		
+
 			/// <summary>
 			/// Retourne une référence de la case à l'index spécifié
 			/// </summary>
