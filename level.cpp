@@ -117,6 +117,26 @@ inline void opt::Level::move(const sf::Vector2f& offset, std::size_t index)
 	}
 }
 
+void opt::Level::setPosition(float x, float y, std::size_t index)
+{
+	m_tiles[index]->setPosition(x, y);
+	sf::Vector2f deplacement{sf::Vector2f(x, y) - m_tiles[index]->getPosition()};
+	for (std::size_t i{m_beginTileIndex[index]}; continueUpdate(index, i); ++i)
+	{
+		m_vertexes[i].position += deplacement;
+	}
+}
+
+void opt::Level::setPosition(const sf::Vector2f& position, std::size_t index)
+{
+	m_tiles[index]->setPosition(position);
+	sf::Vector2f deplacement{position - m_tiles[index]->getPosition()};
+	for (std::size_t i{m_beginTileIndex[index]}; continueUpdate(index, i); ++i)
+	{
+		m_vertexes[i].position += deplacement;
+	}
+}
+
 inline void opt::Level::resize(float x, float y, std::size_t index)
 {
 	m_tiles[index]->resize(x, y);
