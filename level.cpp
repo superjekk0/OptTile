@@ -85,10 +85,6 @@ opt::Level& opt::Level::operator=(opt::Level&& other) noexcept
 	if (this != &other)
 	{
 		m_tiles = std::move(other.m_tiles);
-		m_beginTileIndex = other.m_beginTileIndex;
-		m_subTextures = other.m_subTextures;
-		m_texture = other.m_texture;
-		m_vertexes = other.m_vertexes;
 	}
 	return *this;
 }
@@ -165,10 +161,10 @@ inline void opt::Level::resize(const sf::Vector2f& size, TextureRule textureRule
 	reloadVertexes();
 }
 
-inline void opt::Level::loadTexture(const std::string& path, int subTextureCount)
+inline bool opt::Level::loadTexture(const std::string& path, int subTextureCount)
 {
 	if (!m_texture.loadFromFile(path))
-		throw opt::LoadException(path);
+		return false;
 	//m_nbTexture = subTextureCount;
 	m_subTextures.resize(subTextureCount);
 	for (int i{ 0 }; i < m_subTextures.size(); ++i)
@@ -184,12 +180,13 @@ inline void opt::Level::loadTexture(const std::string& path, int subTextureCount
 		tuile->reloadTexture();
 	}
 	reloadVertexes();
+	return true;
 }
 
-inline void opt::Level::loadTexture(const std::string& path, std::vector<sf::FloatRect>& subTextures)
+inline bool opt::Level::loadTexture(const std::string& path, std::vector<sf::FloatRect>& subTextures)
 {
 	if (!m_texture.loadFromFile(path))
-		throw opt::LoadException(path);
+		return false;
 	//m_nbTexture = subTextures.size();
 	/*m_subTextures.resize(subTextureCount);
 	for (int i{ 0 }; i < m_subTextures.size(); ++i)
@@ -206,12 +203,13 @@ inline void opt::Level::loadTexture(const std::string& path, std::vector<sf::Flo
 		tuile->reloadTexture();
 	}
 	reloadVertexes();
+	return true;
 }
 
-inline void opt::Level::loadTexture(const std::string& path, const std::string& subTexturePath)
+inline bool opt::Level::loadTexture(const std::string& path, const std::string& subTexturePath)
 {
 	if (!m_texture.loadFromFile(path))
-		throw opt::LoadException(path);
+		return false;
 	std::fstream fichier{subTexturePath};
 	std::vector<std::string> lignes;
 	for (int i{ 0 }; fichier; ++i)
@@ -232,6 +230,7 @@ inline void opt::Level::loadTexture(const std::string& path, const std::string& 
 		m_subTextures[i].width = parse<float>(donnees[2]);
 		m_subTextures[i].height = parse<float>(donnees[3]);
 	}
+	return true;
 }
 
 inline void opt::Level::loadTexture(const sf::Texture& texture, int subTextureCount)

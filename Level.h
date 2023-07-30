@@ -15,250 +15,256 @@ namespace opt
 	class OPTTILE_API Level : public sf::Drawable {
 		private:
 			std::vector<std::unique_ptr<Tile>> m_tiles;
-			sf::Texture m_texture;						// Texture used by all tiles
-			std::vector<std::size_t> m_beginTileIndex;	// Indicates the beginning index of vertexes of each tile
-			std::vector<sf::Vertex> m_vertexes;			// Vector of the vertexes (by value copy) of the tiles. Should be used only for draw method and anything else that helps the rendering
-			std::vector<sf::FloatRect> m_subTextures;	// Indicates every possible subtextures
+			sf::Texture m_texture;						// Texture utilisée pour toutes les cases
+			//std::size_t m_nbTexture;					// Indique le nombre de sous-textures dans le fichier
+			std::vector<std::size_t> m_beginTileIndex;	// Indique l'index de commencement des sommets de chaque tuile
+			std::vector<sf::Vertex> m_vertexes;			// Ensemble des sommets copiés par valeur des tuiles. À n'utiliser que pour la méthode draw et ce qui aide à faire le rendu
+			std::vector<sf::FloatRect> m_subTextures;	// Indique les sous-textures possibles
 		
 			/// <summary>
-			/// Indicates if we continue to update vertexes
+			/// Indique si on continue de mettre à jour les sommets
 			/// </summary>
-			/// <param name="index">Index of the tile</param>
-			/// <param name="itterator">Index inside the vector of vertexes</param>
+			/// <param name="index">Index de la tuile</param>
+			/// <param name="itterator">Index dans la liste générique de sommets</param>
 			bool continueUpdate(std::size_t index, std::size_t itterator);
 		
 		public:
 		
 			/// <summary>
-			/// Reloads the vertexes vector and the beginning index of the tiles for their vertexes. Usefull when many tiles have been modified without being updated by the level
+			/// Recharge la liste générique de sommets et l'index de départ des tuiles par rapport aux sommets. Utile lorsque plusieurs tuiles ont été modifiées directement
 			/// </summary>
 			void reloadVertexes();
 		
 			/// <summary>
-			/// Loads inside memory the desired texture et initialize the tile vector at 0 tile
+			/// Charge en mémoire la texture désirée et met le compteur de cases à 0
 			/// </summary>
-			/// <param name="pPathTexture">Path used for the texture loading</param>
-			/// <param name="NbTextures">Divides the texture in subtextures of same width and height</param>
+			/// <param name="pPathTexture"></param>
 			Level(const std::string& pPathTexture, std::size_t pNbTextures);
 		
 			/// <summary>
-			/// Default constructor. Usefull when creating a structure that contains a Level
+			/// Constructeur par défaut. Utile lors de la création d'une structure contenant un niveau
 			/// </summary>
 			Level();
 
 			/// <summary>
-			/// Returns a raw pointer of the tile at the specificated index
+			/// Retourne une référence de la case à l'index spécifié
 			/// </summary>
 			/// <param name="index">Index de la tuile</param>
 			opt::Tile* const operator[](int index);
 
 			/// <summary>
-			/// Modifies the level to make it become the other Level. Copies everything and move every unique_ptr
+			/// 
 			/// </summary>
-			/// <param name="other">The other Level</param>
+			/// <param name="other"></param>
 			opt::Level& operator=(opt::Level&& other) noexcept;
 		
 			/// <summary>
-			/// Draws the level on the SFML target element
+			/// Dessine le niveau sur l'élément SFML cible
 			/// </summary>
-			/// <param name="target">SFML target element of the render</param>
-			/// <param name="states">States to add to the vertexes</param>
+			/// <param name="target">Élément SFML cible du rendu</param>
+			/// <param name="states">États à ajouter aux vecteurs</param>
 			virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 		
 			/// <summary>
-			/// Moves the specified tile by the index to the specified movement indicated in parameter, then updates vertexes 
+			/// Bouge la tuile spécifiée à l'index au mouvement spécifié puis met à jour les sommets
 			/// </summary>
-			/// <param name="x">Horizontal movement</param>
-			/// <param name="y">Vertical movement</param>
-			/// <param name="index">Tile index</param>
+			/// <param name="x">Mouvement horizontal</param>
+			/// <param name="y">Mouvement vertical</param>
+			/// <param name="index">Index de la tuile</param>
 			void move(float offsetX, float offsetY, std::size_t index);
 		
 			/// <summary>
-			/// Moves the specified tile by the index to the specified movement indicated in parameter, then updates vertexes
+			/// Bouge la tuile spécifiée par l'index au mouvement indiqué en paramètre puis met à jour les sommets
 			/// </summary>
-			/// <param name="offset">Movement to do</param>
-			/// <param name="index">Tile index</param>
+			/// <param name="offset">Mouvement à effectuer</param>
+			/// <param name="index">Index de la tuile</param>
 			void move(const sf::Vector2f& offset, std::size_t index);
 
 			/// <summary>
-			/// Moves the specified tile by the index to the position indicated in parameter, then updates vertexes
+			/// Bouge la tuile spécifiée par l'index à la position indiquée en paramètre, puis met à jour les sommets
 			/// </summary>
-			/// <param name="x">New horizontal position</param>
-			/// <param name="y">New vertical position</param>
-			/// <param name="index">Tile index</param>
+			/// <param name="x">Nouvelle position horizontale</param>
+			/// <param name="y">Nouvelle position verticale</param>
+			/// <param name="index">Index de la tuile</param>
 			void setPosition(float x, float y, std::size_t index);
 
 			/// <summary>
-			/// Moves the specified tile by the index to the position indicated in parameter, then updates vertexes
+			/// Bouge la tuile spécifiée par l'index à la position indiquée en paramètre, puis met à jour les sommets
 			/// </summary>
-			/// <param name="position">New tile position</param>
-			/// <param name="">Tile index</param>
+			/// <param name="position">Nouvelle position de la tuile</param>
+			/// <param name="">Index de la tuile</param>
 			void setPosition(const sf::Vector2f& position, std::size_t index);
 		
 			/// <summary>
-			/// Resizes the tile, then updates vertexes for rendering
+			/// Permet de redimensionner la tuile et met à jour les sommets pour faire le rendu
 			/// </summary>
-			/// <param name="x">New horizontal size</param>
-			/// <param name="y">New vertical size</param>
-			/// <param name="index">Tile index</param>
+			/// <param name="x">Nouvelle taille horizontale</param>
+			/// <param name="y">Nouvelle taille verticale</param>
+			/// <param name="index">Index de la tuile</param>
 			void resize(float x, float y, std::size_t index);
 		
 			/// <summary>
-			/// Resizes the tile, then updates vertexes for rendering
+			/// Permet de redimensionner la tuile et met à jour les sommets pour faire le rendu
 			/// </summary>
-			/// <param name="size">New tile size</param>
-			/// <param name="index">Tile index</param>
+			/// <param name="size">Nouvelles dimensions de la tuile</param>
+			/// <param name="index">Index de la tuile</param>
 			void resize(const sf::Vector2f& size, std::size_t index);
 		
 			/// <summary>
-			/// Resizes the tile, changes the texture rule, then updates vertexes for rendering
+			/// Permet de redimensionner la tuile, de changer la règle de texture et met à jour les sommets pour faire le rendu
 			/// </summary>
-			/// <param name="x">New horizontal size</param>
-			/// <param name="y">New vertical size</param>
-			/// <param name="textureRule">New tile's texture rule</param>
-			/// <param name="index">Tile index</param>
+			/// <param name="x">Nouvelle taille horizontale</param>
+			/// <param name="y">Nouvelle taille verticale</param>
+			/// <param name="textureRule">Nouvelle règle de texture de la tuile</param>
+			/// <param name="index">Index de la tuile</param>
 			void resize(float x, float y, TextureRule textureRule, std::size_t index);
 		
 			/// <summary>
-			/// Resizes the tile, changes the texture rule, then updates vertexes for rendering
+			/// Permet de redimensionner la tuile, de changer la r�gle de texture et met à jour les sommets pour faire le rendu
 			/// </summary>
-			/// <param name="size">New size</param>
-			/// <param name="textureRule">New tile's texture rule</param>
-			/// <param name="index">Tile index</param>
+			/// <param name="size">Nouvelles dimensions de la tuile</param>
+			/// <param name="textureRule">Nouvelle règle de texture de la tuile</param>
+			/// <param name="index">Index de la tuile</param>
 			void resize(const sf::Vector2f& size, TextureRule textureRule, std::size_t index);
 		
 			/// <summary>
-			/// Reloads the global texture at the indicated path and redefines the number of subtextures in equal tiles of same height and width 
+			/// Recharge la texture globale au chemin indiqué et redéfinis le nombre de sous-textures
 			/// </summary>
-			/// <param name="path">Texture's path</param>
-			/// <param name="subTextureCount">Number of subtextures inside the texture</param>
-			void loadTexture(const std::string& path, int subTextureCount);
+			/// <param name="path">Chemin de la texture</param>
+			/// <param name="subTextureCount">Nombre de sous-textures dans la texture globale</param>
+			/// <returns>Indique si la texture a pu être chargée</returns>
+			bool loadTexture(const std::string& path, int subTextureCount);
 		
 			/// <summary>
-			/// Reloads the global texture at the indicated path and the subtexture's rectangles
+			/// Recharge la texture globale au chemin indiqué, redéfinis le nombre de textures et les rectangles de sous-textures
 			/// </summary>
-			/// <param name="path">Texture path</param>
-			/// <param name="subTextures">Subtexture rectangles</param>
-			void loadTexture(const std::string& path, std::vector<sf::FloatRect>& subTextures);
+			/// <param name="path">Chemin de la texture</param>
+			/// <param name="subTextureCount">Nombre de sous-textures</param>
+			/// <param name="subTextures">Rectangles définissant les sous-textures</param>
+			bool loadTexture(const std::string& path, std::vector<sf::FloatRect>& subTextures);
 		
 			/// <summary>
-			/// Reloads the global texture at the indicated path as well as the subtexture's rectangles
+			/// Recharge la texture globale au chemin indiqué
 			/// </summary>
-			/// <param name="path">Texture path</param>
-			/// <param name="subTexturePath">Subtexture path. The subtexture rectangle must be formatted this way: "left,top,width,height"</param>
-			void loadTexture(const std::string& path, const std::string& subTexturePath);
+			/// <param name="path">Chemin de la texture</param>
+			/// <param name="subTexturePath">Chemin de la règle régissant les sous-textures. Le fichier doit être ordonné de même : left, top, width, height</param>
+			bool loadTexture(const std::string& path, const std::string& subTexturePath);
 		
 			/// <summary>
-			/// Reloads the global texture at the indicated path and redefines the number of subtextures in equals subtexture's rectangles
+			/// Recharge la texture gloable à la texture indiquée et redéfinis le nombre de sous-textures
 			/// </summary>
-			/// <param name="texture">New global texture</param>
-			/// <param name="subTextureCount">Number of subtextures inside the new global texture</param>
+			/// <param name="texture">Nouvelle texture globale</param>
+			/// <param name="subTextureCount">Nombre de sous-textures dans la nouvelle texture globale</param>
+			/// <returns>Indique si la texture a pu être chargée</returns>
 			void loadTexture(const sf::Texture& texture, int subTextureCount);
 		
 			/// <summary>
-			/// Reloads the global texture from the indicated texture and reloads subtexture's rectangles from an existing vector
+			/// Recharge la texture globale à la texture indiquée, redéfinis le nombre de sous-textures et les rectangles de sous-textures
 			/// </summary>
-			/// <param name="texture">New global texture</param>
-			/// <param name="subTextures">Rectangles defining the subtextures</param>
+			/// <param name="texture">Nouvelle texture globale</param>
+			/// <param name="subTextureCount">Nombre de sous textures dans la nouvelle texture globale</param>
+			/// <param name="subTextures">Rectangles définissant les sous-textures</param>
 			void loadTexture(const sf::Texture& texture, std::vector<sf::FloatRect>& subTextures);
 		
 			/// <summary>
-			/// Reloads the global from an already present texture insie memory and reads dimensions of subtexture's rectangles from a file
+			/// Recharge la texture depuis une texture déjà en mémoire et lit les dimensions de chaque sous-texture
 			/// </summary>
-			/// <param name="texture">Texture reference used to copy</param>
-			/// <param name="subTexturePath">Subtexture file path. The file must be formatted that way: "left,top,width,height"</param>
+			/// <param name="texture">Référence de texture utilisée</param>
+			/// <param name="subTexturePath">Chemin du fichier régissant les sous-textures</param>
 			void loadTexture(const sf::Texture& texture, const std::string& subTexturePath);
 		
 			/// <summary>
-			/// Resets the vertexes' vector (for rendering) and the tile vector
+			/// Réinitialise la liste générique de sommets (pour le rendu) et la liste générique de tuiles
 			/// </summary>
 			void resetTiles();
 		
 			/// <summary>
-			/// Adds a tile to the tiles' vector. It allows to add derived objects inside the vector
+			/// Rajoute une tuile à la liste générique de tuiles. Permet de rajouter dans la liste générique une classe dérivée de Tile
 			/// </summary>
-			/// <param name="tile">Tile to add</param>
+			/// <param name="tile">Tuile à rajouter</param>
 			void add(const Tile& tile);
 		
 			/// <summary>
-			/// Constructs and add a new Tile inside the tiles' vector
+			/// Construit une nouvelle tuile à la liste générique
 			/// </summary>
-			/// <param name="size">Size of the new tile</param>
-			/// <param name="position">Position of the new tile</param>
-			/// <param name="numberSubTexture">Number of subtexture</param>
-			/// <param name="textureRule">Texture rule applied to the tile. Check documentation for more details</param>
+			/// <param name="size">Taille de la nouvelle tuile</param>
+			/// <param name="position">Position de la nouvelle tuile</param>
+			/// <param name="numberSubTexture">Numéro de sous-texture</param>
+			/// <param name="textureRule">Règle appliquée à la sous-texture. Voir la documentation pour plus de détails</param>
 			void add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule);
 		
 			/// <summary>
-			/// Constructs and add a new tile inside the tiles' vector
+			/// Construit une nouvelle tuile à la liste générique
 			/// </summary>
-			/// <param name="size">Size of the new tile</param>
-			/// <param name="position">Position of the new tile</param>
-			/// <param name="numberSubTexture">Number of subtexture</param>
-			/// <param name="textureRule">Texture rule applied to the tile. Check documentation for more details</param>
-			/// <param name="scale">Scale applied to the texture</param>
+			/// <param name="size">Taille de la nouvelle tuile</param>
+			/// <param name="position">Position de la nouvelle tuile</param>
+			/// <param name="numberSubTexture">Numéro de sous-texture</param>
+			/// <param name="textureRule">Règle appliquée à la sous-texture. Voir la documentation pour plus de détails</param>
+			/// <param name="scale">Échelle appliquée à la texture</param>
 			void add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule, const sf::Vector2f& scale);
 		
 			/// <summary>
-			/// Returns a pointer of a derived object
+			/// Retourne un pointeur d'un objet d'une classe spécifiée
 			/// </summary>
-			/// <typeparam name="T">Type of the derived object</typeparam>
-			/// <param name="index">Tile index</param>
-			/// <returns>If null, the object is not this type</returns>
+			/// <typeparam name="T">Type de l'objet dérivé</typeparam>
+			/// <param name="index">Index de l'objet à vérifier</param>
+			/// <returns>Si null, l'objet à l'index spécifié n'est pas de ce type</returns>
 			template <class T>
 			T* const derivedPointer(int index);
 		
 			/// <summary>
-			/// Returns a constant reference of the utilised texture for the level
+			/// Retourne une référence constante de la texture utilisée dans le niveau
 			/// </summary>
 			const sf::Texture& getTexture() const;
 		
 			/// <summary>
-			/// Returns a reference of the subtextures' vector. Should only be used to make derived objects
+			/// Retourne une référence de la liste générique. Ne devrait être utilisé que pour faire des objets dérivés de Tile
 			/// </summary>
+			/// <returns></returns>
 			const std::vector<sf::FloatRect>& getSubTextures() const;
 		
 			/// <summary>
-			/// Changes subtexture rectangle (for example, animate) and updates vertexes. It might be possible that the method is not optimised
+			/// Change le rectangle de texture (par exemple, pour faire de l'animation) et met à jour les sommets. Il est possible que la méthode ne soit pas optimisée
 			/// </summary>
-			/// <param name="numberTexture">Number of the new subtexture</param>
-			/// <param name="index">Tile index</param>
+			/// <param name="numberTexture">Numéro de la nouvelle sous-texture</param>
+			/// <param name="index">Index de la tuile</param>
 			void changeTextureRect(int numberTexture, int index);
 		
 			/// <summary>
-			/// Changes the color of vertexes of a tile
+			/// Change la couleur des points d'une tuile
 			/// </summary>
-			/// <param name="color">New tile color (to apply a colour effect)</param>
-			/// <param name="index">Tile index</param>
+			/// <param name="color">Nouvelle couleur de la tuile (pour appliquer un effet de couleur)</param>
+			/// <param name="index">Index de la tuile</param>
 			void changeColor(const sf::Color& color, int index);
 		
 			/// <summary>
-			/// Resets the vertexes' colour of the tile (gets back to colour 0xFFFFFFFF)
+			/// Réinitialise la couleur des points d'une tuile
 			/// </summary>
-			/// <param name="index">Tile index</param>
+			/// <param name="index">Index de la tuile</param>
 			void resetColor(int index);
 		
 			/// <summary>
-			/// Returns tile's colour
+			/// Retourne la couleur d'une tuile
 			/// </summary>
-			/// <param name="index">Tile index</param>
+			/// <param name="index">Index de la tuile</param>
 			sf::Color getColor(int index) const;
 		
 			/// <summary>
-			/// Returns the subtexture rectangle indicated by the index
+			/// Retourne le rectangle de sous-texture à l'index indiqué
 			/// </summary>
-			/// <param name="index">Subtexture index</param>
+			/// <param name="index">Index de la sous-texture</param>
 			sf::FloatRect getSubTexture(int index) const;
 		
 			/// <summary>
-			/// Returns the subtexture's size indicated by the index
+			/// Retourne la taille de la sous-texture à l'index indiqué
 			/// </summary>
-			/// <param name="index">Subtexture index</param>
+			/// <param name="index">Index de la sous-texture</param>
 			sf::Vector2f getSubTextureSize(int index) const;
 		
 			/// <summary>
-			/// Returns the number of tiles inside the level
+			/// Retourne le nombre de tuiles dans le niveau
 			/// </summary>
+			/// <returns></returns>
 			std::size_t size() const;
 	};
 
