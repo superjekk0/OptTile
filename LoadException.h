@@ -14,14 +14,14 @@ namespace opt
 		std::string m_error;
 
 		/// <summary>
-		/// Indique une exception au niveau du chargement d'un objet quelconque
+		/// Indicates an error that occured during the loading of an object at an undefined path
 		/// </summary>
 		LoadException();
 
 		/// <summary>
-		/// Indique une exception au niveau du chargement d'un objet au chemin indiqué
+		/// Indicates an error that occured during the loading of an object at a defined path
 		/// </summary>
-		/// <param name="path">Chemin qui a déclenché l'exception</param>
+		/// <param name="path">Path that has thrown the exception</param>
 		LoadException(const std::string& path);
 	};
 }
