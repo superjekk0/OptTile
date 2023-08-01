@@ -115,6 +115,11 @@ inline const std::vector<sf::Vertex>& opt::fr::Tile::vertexes() const
 	return m_vertexes;
 }
 
+inline std::vector<sf::Vertex>& opt::fr::Tile::vertexes()
+{
+	return m_vertexes;
+}
+
 inline sf::Vector2f opt::fr::Tile::topLeftCorner() const
 {
 	return m_position;

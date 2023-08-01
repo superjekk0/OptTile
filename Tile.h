@@ -76,6 +76,11 @@ namespace opt
 		const std::vector<sf::Vertex>& vertexes() const;
 
 		/// <summary>
+		/// Returns a reference of the vertexes' vector (usefull to draw)
+		/// </summary>
+		std::vector<sf::Vertex>& vertexes();
+
+		/// <summary>
 		/// Returns the tile's height
 		/// </summary>
 		float height() const;

@@ -37,11 +37,11 @@ inline void opt::fr::Level::reloadVertexes()
 	m_beginTileIndex.resize(m_tiles.size());
 	for (int i{ 0 }; i < m_tiles.size(); ++i)
 	{
-		m_beginTileIndex[i] = m_vertexes.size();
+		m_beginTileIndex[i] = m_vertexes.getVertexCount();
 		auto& sommets{ m_tiles[i]->vertexes() };
 		for (auto& sommet : sommets)
 		{
-			m_vertexes.push_back(sommet);
+			m_vertexes.append(sommet);
 		}
 	}
 }
@@ -49,18 +49,23 @@ inline void opt::fr::Level::reloadVertexes()
 inline bool opt::fr::Level::continueUpdate(std::size_t index, std::size_t itterator)
 {
 	if (index >= m_beginTileIndex.size() - 1)
-		return itterator < m_vertexes.size();
+		return itterator < m_vertexes.getVertexCount();
 	else
 		return itterator < m_beginTileIndex[index + 1];
 }
 
-inline opt::fr::Level::Level()// : m_nbTexture{ 0 }
+inline opt::fr::Level::Level() : m_vertexes{ sf::Triangles }
 {
 
 }
 
-inline opt::fr::Level::Level(const std::string& pPathTexture, std::size_t pNbTextures) //:
-//m_nbTexture{ pNbTextures }
+inline opt::fr::Level::~Level()
+{
+	for (auto& tile : m_tiles)
+		tile.release();
+}
+
+inline opt::fr::Level::Level(const std::string& pPathTexture, std::size_t pNbTextures) : m_vertexes{sf::Triangles}
 {
 	if (!m_texture.loadFromFile(pPathTexture))
 		throw opt::fr::LoadException(pPathTexture);
@@ -95,8 +100,8 @@ inline void opt::fr::Level::draw(sf::RenderTarget& target, sf::RenderStates stat
 
 	//states.transform = m_transformations;
 
-	if (m_vertexes.size() > 0)
-		target.draw(&m_vertexes[0], m_vertexes.size(), sf::Triangles, states);
+	if (m_vertexes.getVertexCount() > 0)
+		target.draw(m_vertexes, states);
 }
 
 inline void opt::fr::Level::move(float offsetX, float offsetY, std::size_t index)
@@ -296,25 +301,25 @@ inline void opt::fr::Level::resetTiles()
 inline void opt::fr::Level::add(const opt::fr::Tile& tile)
 {
 	m_tiles.push_back(tile.clone());
-	m_beginTileIndex.push_back(m_vertexes.size());
-	for (const sf::Vertex& sommet : tile.vertexes())
-		m_vertexes.push_back(sommet);
+	m_beginTileIndex.push_back(m_vertexes.getVertexCount());
+	for (sf::Vertex& sommet : m_tiles[m_tiles.size() - 1]->vertexes())
+		m_vertexes.append(sommet);
 }
 
 inline void opt::fr::Level::add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule)
 {
 	m_tiles.push_back(std::make_unique<opt::fr::Tile>(m_texture, numberSubTexture, size, position, textureRule, m_subTextures));
-	m_beginTileIndex.push_back(m_vertexes.size());
-	for (const sf::Vertex& sommet : m_tiles[m_tiles.size() - 1]->vertexes())
-		m_vertexes.push_back(sommet);
+	m_beginTileIndex.push_back(m_vertexes.getVertexCount());
+	for (sf::Vertex& sommet : m_tiles[m_tiles.size() - 1]->vertexes())
+		m_vertexes.append(sommet);
 }
 
 inline void opt::fr::Level::add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule, const sf::Vector2f& scale)
 {
 	m_tiles.push_back(std::make_unique<opt::fr::Tile>(m_texture, numberSubTexture, size, position, textureRule, scale, m_subTextures));
-	m_beginTileIndex.push_back(m_vertexes.size());
-	for (const sf::Vertex& sommet : m_tiles[m_tiles.size() - 1]->vertexes())
-		m_vertexes.push_back(sommet);
+	m_beginTileIndex.push_back(m_vertexes.getVertexCount());
+	for (sf::Vertex& sommet : m_tiles[m_tiles.size() - 1]->vertexes())
+		m_vertexes.append(sommet);
 }
 
 inline const sf::Texture& opt::fr::Level::getTexture() const

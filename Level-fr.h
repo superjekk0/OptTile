@@ -18,9 +18,8 @@ namespace opt
 		private:
 			std::vector<std::unique_ptr<opt::fr::Tile>> m_tiles;
 			sf::Texture m_texture;						// Texture utilisée pour toutes les cases
-			//std::size_t m_nbTexture;					// Indique le nombre de sous-textures dans le fichier
 			std::vector<std::size_t> m_beginTileIndex;	// Indique l'index de commencement des sommets de chaque tuile
-			std::vector<sf::Vertex> m_vertexes;			// Ensemble des sommets copiés par valeur des tuiles. À n'utiliser que pour la méthode draw et ce qui aide à faire le rendu
+			sf::VertexArray m_vertexes;					// Ensemble des sommets copiés par valeur des tuiles. À n'utiliser que pour la méthode draw et ce qui aide à faire le rendu
 			std::vector<sf::FloatRect> m_subTextures;	// Indique les sous-textures possibles
 
 			/// <summary>
@@ -47,6 +46,11 @@ namespace opt
 			/// Constructeur par défaut. Utile lors de la création d'une structure contenant un niveau
 			/// </summary>
 			Level();
+
+			/// <summary>
+			/// Détruit le niveau. Empêche la corruption du heap
+			/// </summary>
+			~Level();
 
 			/// <summary>
 			/// Retourne une référence de la case à l'index spécifié

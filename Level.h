@@ -17,7 +17,7 @@ namespace opt
 			std::vector<std::unique_ptr<Tile>> m_tiles;
 			sf::Texture m_texture;						// Texture used by all tiles
 			std::vector<std::size_t> m_beginTileIndex;	// Indicates the beginning index of vertexes of each tile
-			std::vector<sf::Vertex> m_vertexes;			// Vector of the vertexes (by value copy) of the tiles. Should be used only for draw method and anything else that helps the rendering
+			sf::VertexArray m_vertexes;					// Vector of the vertexes (by value copy) of the tiles. Should be used only for draw method and anything else that helps the rendering
 			std::vector<sf::FloatRect> m_subTextures;	// Indicates every possible subtextures
 		
 			/// <summary>
@@ -45,6 +45,11 @@ namespace opt
 			/// Default constructor. Usefull when creating a structure that contains a Level
 			/// </summary>
 			Level();
+
+			/// <summary>
+			/// Classe's destructor. Usefull to prevent heap corruption
+			/// </summary>
+			~Level();
 
 			/// <summary>
 			/// Returns a raw pointer of the tile at the specificated index

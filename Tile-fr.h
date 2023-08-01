@@ -81,6 +81,11 @@ namespace opt
 			const std::vector<sf::Vertex>& vertexes() const;
 
 			/// <summary>
+			/// Retourne une référence de la liste générique de sommets (pour pouvoir tout dessiner en un appel de la méthode draw)
+			/// </summary>
+			std::vector<sf::Vertex>& vertexes();
+
+			/// <summary>
 			/// Retourne la hauteur de la tuile
 			/// </summary>
 			float height() const;
