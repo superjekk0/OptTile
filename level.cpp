@@ -37,11 +37,11 @@ inline void opt::Level::reloadVertexes()
 	m_beginTileIndex.resize(m_tiles.size());
 	for (int i{ 0 }; i < m_tiles.size(); ++i)
 	{
-		m_beginTileIndex[i] = m_vertexes.getVertexCount();
+		m_beginTileIndex[i] = m_vertexes.size();
 		auto& sommets{ m_tiles[i]->vertexes() };
 		for (auto& sommet : sommets)
 		{
-			m_vertexes.append(sommet);
+			m_vertexes.push_back(&sommet);
 		}
 	}
 }
@@ -49,7 +49,7 @@ inline void opt::Level::reloadVertexes()
 inline bool opt::Level::continueUpdate(std::size_t index, std::size_t itterator)
 {
 	if (index >= m_beginTileIndex.size() - 1)
-		return itterator < m_vertexes.getVertexCount();
+		return itterator < m_vertexes.size();
 	else
 		return itterator < m_beginTileIndex[index + 1];
 }
@@ -104,26 +104,27 @@ inline void opt::Level::draw(sf::RenderTarget& target, sf::RenderStates states) 
 
 	//states.transform = m_transformations;
 
-	if (m_vertexes.getVertexCount() > 0)
-		target.draw(m_vertexes, states);
+	if (m_vertexes.size() > 0)
+		target.draw(m_vertexes[0], m_vertexes.size(),sf::Triangles , states);
 }
 
 inline void opt::Level::move(float offsetX, float offsetY, std::size_t index)
 {
 	m_tiles[index]->move(offsetX, offsetY);
-	for (std::size_t i{ m_beginTileIndex[index] }; continueUpdate(index, i); ++i)
-	{
-		m_vertexes[i].position += sf::Vector2f(offsetX, offsetY);
-	}
+	//for (std::size_t i{ m_beginTileIndex[index] }; continueUpdate(index, i); ++i)
+	//{
+	//	m_vertexes[i].position += sf::Vector2f(offsetX, offsetY);
+	//}
 }
 
 inline void opt::Level::move(const sf::Vector2f& offset, std::size_t index)
 {
 	m_tiles[index]->move(offset);
-	for (std::size_t i{ m_beginTileIndex[index] }; continueUpdate(index, i); ++i)
-	{
-		m_vertexes[i].position += offset;
-	}
+	//for (std::size_t i{ m_beginTileIndex[index] }; continueUpdate(index, i); ++i)
+	//{
+	//	m_vertexes[i].position += offset;
+	//}
+
 }
 
 void opt::Level::setPosition(float x, float y, std::size_t index)
@@ -132,7 +133,7 @@ void opt::Level::setPosition(float x, float y, std::size_t index)
 	sf::Vector2f deplacement{sf::Vector2f(x, y) - m_tiles[index]->getPosition()};
 	for (std::size_t i{m_beginTileIndex[index]}; continueUpdate(index, i); ++i)
 	{
-		m_vertexes[i].position += deplacement;
+		m_vertexes[i]->position += deplacement;
 	}
 }
 
@@ -142,7 +143,7 @@ void opt::Level::setPosition(const sf::Vector2f& position, std::size_t index)
 	sf::Vector2f deplacement{position - m_tiles[index]->getPosition()};
 	for (std::size_t i{m_beginTileIndex[index]}; continueUpdate(index, i); ++i)
 	{
-		m_vertexes[i].position += deplacement;
+		m_vertexes[i]->position += deplacement;
 	}
 }
 
@@ -302,25 +303,25 @@ inline void opt::Level::resetTiles()
 inline void opt::Level::add(const opt::Tile& tile)
 {
 	m_tiles.push_back(tile.clone());
-	m_beginTileIndex.push_back(m_vertexes.getVertexCount());
+	m_beginTileIndex.push_back(m_vertexes.size());
 	for (sf::Vertex& sommet : m_tiles[m_tiles.size() - 1]->vertexes())
-		m_vertexes.append(sommet);
+		m_vertexes.push_back(&sommet);
 }
 
 inline void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule)
 {
 	m_tiles.push_back(std::make_unique<opt::Tile>(m_texture, numberSubTexture, size, position, textureRule, m_subTextures));
-	m_beginTileIndex.push_back(m_vertexes.getVertexCount());
+	m_beginTileIndex.push_back(m_vertexes.size());
 	for (sf::Vertex& sommet : m_tiles[m_tiles.size() - 1]->vertexes())
-		m_vertexes.append(sommet);
+		m_vertexes.push_back(&sommet);
 }
 
 inline void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule, const sf::Vector2f& scale)
 {
 	m_tiles.push_back(std::make_unique<opt::Tile>(m_texture, numberSubTexture, size, position, textureRule, scale, m_subTextures));
-	m_beginTileIndex.push_back(m_vertexes.getVertexCount());
+	m_beginTileIndex.push_back(m_vertexes.size());
 	for (sf::Vertex& sommet : m_tiles[m_tiles.size() - 1]->vertexes())
-		m_vertexes.append(sommet);
+		m_vertexes.push_back(&sommet);
 }
 
 inline const sf::Texture& opt::Level::getTexture() const
@@ -347,15 +348,15 @@ inline void opt::Level::changeTextureRect(int numberTexture, int index)
 inline void opt::Level::changeColour(const sf::Color& color, int index)
 {
 	m_tiles[index]->changeColour(color);
-	for (std::size_t i{ m_beginTileIndex[index] }; continueUpdate(static_cast<std::size_t>(index), i); ++i)
-		m_vertexes[i].color = color;
+	//for (std::size_t i{ m_beginTileIndex[index] }; continueUpdate(static_cast<std::size_t>(index), i); ++i)
+	//	m_vertexes[i].color = color;
 }
 
 inline void opt::Level::resetColour(int index)
 {
 	m_tiles[index]->resetColour();
-	for (std::size_t i{ m_beginTileIndex[index] }; continueUpdate(static_cast<std::size_t>(index), i); ++i)
-		m_vertexes[i].color = sf::Color(0xFFFFFFFF);
+	//for (std::size_t i{ m_beginTileIndex[index] }; continueUpdate(static_cast<std::size_t>(index), i); ++i)
+	//	m_vertexes[i].color = sf::Color(0xFFFFFFFF);
 }
 
 inline sf::Color opt::Level::getColour(int index) const
