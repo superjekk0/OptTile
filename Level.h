@@ -15,16 +15,16 @@ namespace opt
 	class OPTTILE_API Level : public sf::Drawable {
 		private:
 			std::vector<std::unique_ptr<Tile>> m_tiles;
-			// Texture utilisée pour toutes les cases
+			// Texture utilisée pour toutes les cases ///
 			// Texture used by all tiles
 			sf::Texture m_texture;						
-			// Indique l'index de commencement des sommets de chaque tuile
+			// Indique l'index de commencement des sommets de chaque tuile ///
 			// Indicates the beginning index of vertexes of each tile
 			std::vector<std::size_t> m_beginTileIndex;
-			// Ensemble des sommets copiés par valeur des tuiles. À n'utiliser que pour la méthode draw et ce qui aide à faire le rendu
+			// Ensemble des sommets copiés par valeur des tuiles. À n'utiliser que pour la méthode draw et ce qui aide à faire le rendu ///
 			// Vector of the vertexes (by value copy) of the tiles. Should be used only for draw method and anything else that helps the rendering
 			std::vector<sf::Vertex*> m_vertexes;		
-			// Indique les sous-textures possibles
+			// Indique les sous-textures possibles ///
 			// Indicates every possible subtextures
 			std::vector<sf::FloatRect> m_subTextures;	
 		

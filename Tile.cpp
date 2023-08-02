@@ -18,7 +18,7 @@ inline void opt::Tile::intializeVertexes()
 		m_vertexes[4].position = m_vertexes[2].position;
 		m_vertexes[5].position = m_position + m_tileSize;
 		for (auto& sommet : m_vertexes)
-			sommet.color = m_color;
+			sommet.color = m_colour;
 		return;
 	}
 
@@ -402,23 +402,23 @@ inline sf::Vector2f opt::Tile::subTextureSize() const
 	return sf::Vector2f(m_subTextures->at(m_numberSubTexture).width, m_subTextures->at(m_numberSubTexture).height);
 }
 
-inline void opt::Tile::changeColour(const sf::Color& color)
+inline void opt::Tile::changeColour(const sf::Color& colour)
 {
-	m_color = color;
+	m_colour = colour;
 	for (auto& sommet : m_vertexes)
-		sommet.color = m_color;
+		sommet.color = m_colour;
 }
 
 inline void opt::Tile::resetColour()
 {
-	m_color = sf::Color(0xFFFFFFFF);
+	m_colour = sf::Color(0xFFFFFFFF);
 	for (auto& sommet : m_vertexes)
-		sommet.color = m_color;
+		sommet.color = m_colour;
 }
 
 inline sf::Color opt::Tile::getColour() const
 {
-	return m_color;
+	return m_colour;
 }
 
 inline sf::Vector2f opt::Tile::getSize() const
