@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "LoadException.h"
+#include "Exceptions.h"
 
 opt::LoadException::LoadException() : m_error{}
 {

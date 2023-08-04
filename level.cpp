@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "Level.h"
-#include "LoadException.h"
+#include "Exceptions.h"
 
 template <typename T>
-inline T parse(const std::string& line)
+inline T opt::parse(const std::string& line)
 {
 	T valeur;
 	std::stringstream conversion{line};
@@ -17,7 +17,7 @@ inline T parse(const std::string& line)
 /// </summary>
 /// <param name="str">Chaîne de caractères de base</param>
 /// <param name="separator">Caractère servant à séparer</param>
-inline std::vector<std::string> splitString(std::string str, const char separator)
+inline std::vector<std::string> opt::splitString(std::string str, const char separator)
 {
 	std::vector<std::string> listStrings{};
 	listStrings.reserve(4);
@@ -41,7 +41,7 @@ inline void opt::Level::reloadVertexes()
 		auto& sommets{ m_tiles[i]->vertexes() };
 		for (auto& sommet : sommets)
 		{
-			m_vertexes.push_back(&sommet);
+			m_vertexes.push_back(sommet);
 		}
 	}
 }
@@ -54,7 +54,7 @@ inline bool opt::Level::continueUpdate(std::size_t index, std::size_t itterator)
 		return itterator < m_beginTileIndex[index + 1];
 }
 
-inline opt::Level::Level() : m_vertexes{ sf::Triangles }
+inline opt::Level::Level() : m_renderVertexes{sf::Triangles, sf::VertexBuffer::Dynamic}
 {
 
 }
@@ -65,7 +65,7 @@ inline opt::Level::~Level()
 		tile.release();
 }
 
-inline opt::Level::Level(const std::string& pPathTexture, std::size_t pNbTextures) : m_vertexes{sf::Triangles}
+inline opt::Level::Level(const std::string& pPathTexture, std::size_t pNbTextures) : m_renderVertexes{sf::Triangles, sf::VertexBuffer::Dynamic}
 {
 	if (!m_texture.loadFromFile(pPathTexture))
 		throw opt::LoadException(pPathTexture);
@@ -104,8 +104,9 @@ inline void opt::Level::draw(sf::RenderTarget& target, sf::RenderStates states) 
 
 	//states.transform = m_transformations;
 
+	// TODO : Changer le rendu par un VertexBuffer
 	if (m_vertexes.size() > 0)
-		target.draw(m_vertexes[0], m_vertexes.size(),sf::Triangles , states);
+		target.draw(m_renderVertexes, states);
 }
 
 inline void opt::Level::move(float offsetX, float offsetY, std::size_t index)
@@ -133,7 +134,7 @@ void opt::Level::setPosition(float x, float y, std::size_t index)
 	sf::Vector2f deplacement{sf::Vector2f(x, y) - m_tiles[index]->getPosition()};
 	for (std::size_t i{m_beginTileIndex[index]}; continueUpdate(index, i); ++i)
 	{
-		m_vertexes[i]->position += deplacement;
+		m_vertexes[i].get().position += deplacement;
 	}
 }
 
@@ -143,7 +144,7 @@ void opt::Level::setPosition(const sf::Vector2f& position, std::size_t index)
 	sf::Vector2f deplacement{position - m_tiles[index]->getPosition()};
 	for (std::size_t i{m_beginTileIndex[index]}; continueUpdate(index, i); ++i)
 	{
-		m_vertexes[i]->position += deplacement;
+		m_vertexes[i].get().position += deplacement;
 	}
 }
 
@@ -297,6 +298,7 @@ inline void opt::Level::resetTiles()
 	for (auto& tuile : m_tiles)
 		tuile.release();
 	m_tiles.resize(0);
+	m_renderVertexes.create(0);
 	m_vertexes.resize(0);
 }
 
@@ -305,7 +307,9 @@ inline void opt::Level::add(const opt::Tile& tile)
 	m_tiles.push_back(tile.clone());
 	m_beginTileIndex.push_back(m_vertexes.size());
 	for (sf::Vertex& sommet : m_tiles[m_tiles.size() - 1]->vertexes())
-		m_vertexes.push_back(&sommet);
+		m_vertexes.push_back(sommet);
+	m_renderVertexes.create(m_vertexes.size());
+	m_renderVertexes.update(&m_vertexes[0].get(), m_vertexes.size(), 0);
 }
 
 inline void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule)
@@ -313,7 +317,9 @@ inline void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& positi
 	m_tiles.push_back(std::make_unique<opt::Tile>(m_texture, numberSubTexture, size, position, textureRule, m_subTextures));
 	m_beginTileIndex.push_back(m_vertexes.size());
 	for (sf::Vertex& sommet : m_tiles[m_tiles.size() - 1]->vertexes())
-		m_vertexes.push_back(&sommet);
+		m_vertexes.push_back(sommet);
+	m_renderVertexes.create(m_vertexes.size());
+	m_renderVertexes.update(&m_vertexes[0].get(), m_vertexes.size(), 0);
 }
 
 inline void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule, const sf::Vector2f& scale)
@@ -321,7 +327,9 @@ inline void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& positi
 	m_tiles.push_back(std::make_unique<opt::Tile>(m_texture, numberSubTexture, size, position, textureRule, scale, m_subTextures));
 	m_beginTileIndex.push_back(m_vertexes.size());
 	for (sf::Vertex& sommet : m_tiles[m_tiles.size() - 1]->vertexes())
-		m_vertexes.push_back(&sommet);
+		m_vertexes.push_back(sommet);
+	m_renderVertexes.create(m_vertexes.size());
+	m_renderVertexes.update(&m_vertexes[0].get(), m_vertexes.size(), 0);
 }
 
 inline const sf::Texture& opt::Level::getTexture() const
