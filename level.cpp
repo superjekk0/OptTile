@@ -33,9 +33,13 @@ inline std::vector<std::string> opt::splitString(std::string str, const char sep
 
 inline void opt::Level::reloadVertexes()
 {
-	m_vertexes.resize(0);
-	m_beginTileIndex.resize(m_tiles.size());
-	for (int i{ 0 }; i < m_tiles.size(); ++i)
+	int indexChangement{ vertexesChanges() };
+	if (indexChangement < 0)
+		return;
+
+	m_renderVertexes.create(0);
+	m_vertexes.resize(m_beginTileIndex[indexChangement]);
+	for (int i{ indexChangement }; i < m_tiles.size(); ++i)
 	{
 		m_beginTileIndex[i] = m_vertexes.size();
 		auto& sommets{ m_tiles[i]->vertexes() };
@@ -44,6 +48,9 @@ inline void opt::Level::reloadVertexes()
 			m_vertexes.push_back(sommet);
 		}
 	}
+
+	m_renderVertexes.create(m_vertexes.size());
+	m_renderVertexes.update(&m_vertexes[0].get(), m_vertexes.size(), 0);
 }
 
 inline bool opt::Level::continueUpdate(std::size_t index, std::size_t itterator)
@@ -52,6 +59,18 @@ inline bool opt::Level::continueUpdate(std::size_t index, std::size_t itterator)
 		return itterator < m_vertexes.size();
 	else
 		return itterator < m_beginTileIndex[index + 1];
+}
+
+int opt::Level::vertexesChanges()
+{
+	for (int i{ 0 }; i < m_beginTileIndex.size(); ++i)
+	{
+		if (&m_vertexes[m_beginTileIndex[i]].get() != m_tiles[i]->vertexes().data()
+			|| m_tiles[i]->vertexes().size() != 
+			(i == m_beginTileIndex.size() - 1 ? m_vertexes.size() - m_beginTileIndex[i] : m_beginTileIndex[i + 1] - m_beginTileIndex[i]))
+			return i;
+	}
+	return -1;
 }
 
 inline opt::Level::Level() : m_renderVertexes{sf::Triangles, sf::VertexBuffer::Dynamic}
@@ -156,20 +175,26 @@ inline void opt::Level::resize(float x, float y, std::size_t index)
 
 inline void opt::Level::resize(const sf::Vector2f& size, std::size_t index)
 {
+	std::size_t nbSommets{m_tiles[index]->vertexes().size()};
 	m_tiles[index]->resize(size);
-	reloadVertexes();
+	if (m_tiles[index]->vertexes().size() != nbSommets)
+		reloadVertexes();
 }
 
 inline void opt::Level::resize(float x, float y, TextureRule textureRule, std::size_t index)
 {
+	std::size_t nbSommets{m_tiles[index]->vertexes().size()};
 	m_tiles[index]->resize(x, y, textureRule);
-	reloadVertexes();
+	if (m_tiles[index]->vertexes().size() != nbSommets)
+		reloadVertexes();
 }
 
 inline void opt::Level::resize(const sf::Vector2f& size, TextureRule textureRule, std::size_t index)
 {
+	std::size_t nbSommets{m_tiles[index]->vertexes().size()};
 	m_tiles[index]->resize(size, textureRule);
-	reloadVertexes();
+	if (m_tiles[index]->vertexes().size() != nbSommets)
+		reloadVertexes();
 }
 
 inline void opt::Level::loadTexture(const std::string& path, int subTextureCount)
@@ -309,7 +334,8 @@ inline void opt::Level::add(const opt::Tile& tile)
 	for (sf::Vertex& sommet : m_tiles[m_tiles.size() - 1]->vertexes())
 		m_vertexes.push_back(sommet);
 	m_renderVertexes.create(m_vertexes.size());
-	m_renderVertexes.update(&m_vertexes[0].get(), m_vertexes.size(), 0);
+	if (m_vertexes.size() > 0)
+		m_renderVertexes.update(&m_vertexes[0].get(), m_vertexes.size(), 0);
 }
 
 inline void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule)
@@ -319,7 +345,8 @@ inline void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& positi
 	for (sf::Vertex& sommet : m_tiles[m_tiles.size() - 1]->vertexes())
 		m_vertexes.push_back(sommet);
 	m_renderVertexes.create(m_vertexes.size());
-	m_renderVertexes.update(&m_vertexes[0].get(), m_vertexes.size(), 0);
+	if (m_vertexes.size() > 0)
+		m_renderVertexes.update(&m_vertexes[0].get(), m_vertexes.size(), 0);
 }
 
 inline void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule, const sf::Vector2f& scale)
@@ -329,7 +356,8 @@ inline void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& positi
 	for (sf::Vertex& sommet : m_tiles[m_tiles.size() - 1]->vertexes())
 		m_vertexes.push_back(sommet);
 	m_renderVertexes.create(m_vertexes.size());
-	m_renderVertexes.update(&m_vertexes[0].get(), m_vertexes.size(), 0);
+	if (m_vertexes.size() > 0)
+		m_renderVertexes.update(&m_vertexes[0].get(), m_vertexes.size(), 0);
 }
 
 inline const sf::Texture& opt::Level::getTexture() const

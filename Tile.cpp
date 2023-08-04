@@ -79,7 +79,7 @@ inline void opt::Tile::intializeVertexes()
 	}
 }
 
-inline opt::Tile::Tile() : m_texture{ nullptr }, m_numberSubTexture{ 0 }, m_textureRule{ TextureRule::repeat_texture }, m_subTextures{ nullptr }
+inline opt::Tile::Tile() : m_texture{ nullptr }, m_numberSubTexture{ 0 }, m_textureRule{ TextureRule::repeat_texture }, m_subTextures{ nullptr }, m_vertexes{6}
 {}
 
 inline opt::Tile::Tile(const sf::Texture& texture, int noTuileDebutTexture, const sf::Vector2f& desiredSize,

@@ -154,6 +154,10 @@ namespace opt
 		/// <param name="itterator">Index dans la liste générique de sommets /// Index inside the vector of vertexes</param>
 		bool continueUpdate(std::size_t index, std::size_t itterator);
 
+		/// <summary>
+		/// Indique l'emplacement de l'objet Tile ayant un changement dans ses sommets s'il y en a un
+		/// </summary>
+		int vertexesChanges();
 	public:
 
 		/// <summary>
