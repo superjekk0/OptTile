@@ -145,6 +145,9 @@ namespace opt
 		// Sert à faire le rendu des sommets ///
 		// Allows to make the render
 		sf::VertexBuffer m_renderVertexes;
+		// Indique si à chaque changement de tuile, il faut mettre à jour le buffer ///
+		// Indicates if at each Tile change, it has to be updated.
+		bool m_autoUpdate;
 
 		/// <summary>
 		/// Indique si on continue de mettre à jour les sommets ///
@@ -157,7 +160,7 @@ namespace opt
 		/// <summary>
 		/// Indique l'emplacement de l'objet Tile ayant un changement dans ses sommets s'il y en a un
 		/// </summary>
-		int vertexesChanges();
+		//int vertexesChanges();
 	public:
 
 		/// <summary>
@@ -325,6 +328,42 @@ namespace opt
 		/// <param name="texture">Référence de texture utilisée /// Texture reference used to copy</param>
 		/// <param name="subTexturePath">Chemin du fichier de sous-textures. Le formattage doit se faire ainsi: "left,top,width,height" /// Subtexture file path. The file must be formatted that way: "left,top,width,height"</param>
 		void loadTexture(const sf::Texture& texture, const std::string& subTexturePath);
+
+		/// <summary>
+		/// Change le facteur d'agrandissement de la tuile indiquée en paramètre ///
+		/// Changes the zoom of the Tile indicated in parameter
+		/// </summary>
+		/// <param name="scale">Facteur d'agrandissement/// Zoom factor</param>
+		/// <param name="index">Index de la tuile /// Tile index</param>
+		void setScale(const sf::Vector2f& scale, std::size_t index);
+
+		/// <summary>
+		/// Change le facteur d'agrandissement de la tuile indiquée en paramètre ///
+		/// Changes the zoom of the Tile indicated in parameter
+		/// </summary>
+		/// <param name="x">Facteur d'agrandissement horizontal /// Horizontal zoom factor</param>
+		/// <param name="y">Facteur d'agrandissement vertical /// Vertical zoom factor</param>
+		/// <param name="index">Index de la tuile /// Tile index</param>
+		void setScale(float x, float y, std::size_t index);
+
+		/// <summary>
+		/// Change le facteur d'agrandissement de la tuile indiquée en paramètre après avoir changé la règle de texture ///
+		/// Changes the zoom of the Tile indicated in parameter after having changed the texture rule
+		/// </summary>
+		/// <param name="scale">Facteur d'agrandissement /// Zoom factor</param>
+		/// <param name="textureRule">Nouvelle règle de texture /// New texture rule</param>
+		/// <param name="index">Index de la tuile /// Tile index</param>
+		void setScale(const sf::Vector2f& scale, TextureRule textureRule, std::size_t index);
+
+		/// <summary>
+		/// Change le facteur d'agrandissement de la tuile indiquée en paramètre après avoir changé la règle de texture ///
+		/// Changes the zoom of the Tile indicated in parameter after having changed the texture rule
+		/// </summary>
+		/// <param name="x">Facteur d'agrandissement horizontal /// Horizontal zoom factor</param>
+		/// <param name="y">Facteur d'agrandissement vertical /// Vertical zoom factor</param>
+		/// <param name="textureRule">Nouvelle règle de texture /// New texture rule</param>
+		/// <param name="index">Index de la tuile /// Tile index</param>
+		void setScale(float x, float y, TextureRule textureRule, std::size_t index);
 
 		/// <summary>
 		/// Réinitialise la liste générique de sommets (pour le rendu) et la liste générique de tuiles /// 

@@ -113,9 +113,9 @@ namespace opt
 		/// <param name="subTextureCount">Nombre de sous-textures /// Number of subtextures</param>
 		/// <param name="textureRule">Règle appliquée à la sous-texture /// Rule applied to the subtexture</param>
 		/// <param name="subTextures">Positions et tailles des sous-textures /// Positions and sizes of the subtextures</param>
-		Tile(int noTuileDebutTexture, const sf::FloatRect& tileRect, TextureRule textureRule,
-			const std::vector<sf::FloatRect>& subTextures, std::vector<std::size_t>& beginTiles,
-			std::vector<sf::Vertex>& vertices);
+		//Tile(int noTuileDebutTexture, const sf::FloatRect& tileRect, TextureRule textureRule,
+		//	const std::vector<sf::FloatRect>& subTextures, std::vector<std::size_t>& beginTiles,
+		//	std::vector<sf::Vertex>& vertices);
 
 		/// <summary>
 		/// Constructeur d'une tuile mettant le ratio de la texture par rapport à la texture à l'échelle demandée ///
@@ -129,9 +129,8 @@ namespace opt
 		/// <param name="textureRule">Règle appliquée à la sous-texture /// Rule applied to the subtexture</param>
 		/// <param name="scale">Zoom appliqué à la texture /// Zoom applied to the texture</param>
 		/// <param name="subTextures">Positions et tailles des sous-textures /// Positions and sizes of the subtextures</param>
-		Tile(int noTuileDebutTexture, const sf::FloatRect& tileRect, TextureRule textureRule,
-			const sf::Vector2f& scale, const std::vector<sf::FloatRect>& subTextures,
-			std::vector<std::size_t>& beginTiles, std::vector<sf::Vertex>& vertices);
+		Tile(int noTuileDebutTexture, const sf::FloatRect& tileRect, TextureRule textureRule, const std::vector<sf::FloatRect>& subTextures,
+			std::vector<std::size_t>& beginTiles, std::vector<sf::Vertex>& vertices, sf::Vector2f scale = sf::Vector2f(1.f, 1.f));
 
 		/// <summary>
 		/// Retourne une référence de la liste générique de sommets (pour pouvoir tout dessiner en un appel de la méthode draw) ///

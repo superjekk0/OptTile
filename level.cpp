@@ -34,24 +34,7 @@ inline std::vector<std::string> opt::splitString(std::string str, const char sep
 
 inline void opt::Level::reloadVertexes()
 {
-	int indexChangement{ vertexesChanges() };
-	if (indexChangement < 0)
-		return;
-
-	m_renderVertexes.create(0);
-	m_vertexes.resize(m_beginTileIndex[indexChangement]);
-	for (int i{ indexChangement }; i < m_tiles.size(); ++i)
-	{
-		m_beginTileIndex[i] = m_vertexes.size();
-		auto& sommets{ m_tiles[i]->vertexes() };
-		for (auto& sommet : sommets)
-		{
-			m_vertexes.push_back(sommet);
-		}
-	}
-
 	m_renderVertexes.create(m_vertexes.size());
-	m_renderVertexes.update(&m_vertexes[0], m_vertexes.size(), 0);
 }
 
 inline bool opt::Level::continueUpdate(std::size_t index, std::size_t itterator)
@@ -62,19 +45,19 @@ inline bool opt::Level::continueUpdate(std::size_t index, std::size_t itterator)
 		return itterator < m_beginTileIndex[index + 1];
 }
 
-int opt::Level::vertexesChanges()
-{
-	for (int i{ 0 }; i < m_beginTileIndex.size(); ++i)
-	{
-		if (&m_vertexes != &m_tiles[i]->vertexes()
-			|| m_tiles[i]->vertexes().size() != //Devra être changé par une méthode nommé vertexCount (puisqu'il s'agit du même vector en théorie)
-			(i == m_beginTileIndex.size() - 1 ? m_vertexes.size() - m_beginTileIndex[i] : m_beginTileIndex[i + 1] - m_beginTileIndex[i]))
-			return i;
-	}
-	return -1;
-}
+//int opt::Level::vertexesChanges()
+//{
+//	for (int i{ 0 }; i < m_beginTileIndex.size(); ++i)
+//	{
+//		if (&m_vertexes != &m_tiles[i]->vertexes()
+//			|| m_tiles[i]->vertexes().size() != //Devra être changé par une méthode nommé vertexCount (puisqu'il s'agit du même vector en théorie)
+//			(i == m_beginTileIndex.size() - 1 ? m_vertexes.size() - m_beginTileIndex[i] : m_beginTileIndex[i + 1] - m_beginTileIndex[i]))
+//			return i;
+//	}
+//	return -1;
+//}
 
-inline opt::Level::Level() : m_renderVertexes{sf::Triangles, sf::VertexBuffer::Dynamic}
+inline opt::Level::Level() : m_renderVertexes{sf::Triangles, sf::VertexBuffer::Dynamic}, m_autoUpdate{true}
 {
 
 }
@@ -85,7 +68,7 @@ inline opt::Level::~Level()
 		tile.release();
 }
 
-inline opt::Level::Level(const std::string& pPathTexture, std::size_t pNbTextures) : m_renderVertexes{sf::Triangles, sf::VertexBuffer::Dynamic}
+inline opt::Level::Level(const std::string& pPathTexture, std::size_t pNbTextures) : m_renderVertexes{sf::Triangles, sf::VertexBuffer::Dynamic}, m_autoUpdate{true}
 {
 	if (!m_texture.loadFromFile(pPathTexture))
 		throw opt::LoadException(pPathTexture);
@@ -124,7 +107,6 @@ inline void opt::Level::draw(sf::RenderTarget& target, sf::RenderStates states) 
 
 	//states.transform = m_transformations;
 
-	// TODO : Changer le rendu par un VertexBuffer
 	if (m_vertexes.size() > 0)
 		target.draw(m_renderVertexes, states);
 }
@@ -265,6 +247,7 @@ inline void opt::Level::loadTexture(const std::string& path, const std::string& 
 		m_subTextures[i].width = parse<float>(donnees[2]);
 		m_subTextures[i].height = parse<float>(donnees[3]);
 	}
+	reloadVertexes();
 }
 
 inline void opt::Level::loadTexture(const sf::Texture& texture, int subTextureCount)
@@ -319,6 +302,30 @@ inline void opt::Level::loadTexture(const sf::Texture& texture, const std::strin
 	//m_nbTexture = m_subTextures.size();
 }
 
+void opt::Level::setScale(const sf::Vector2f& scale, std::size_t index)
+{
+	m_tiles[index]->setScale(scale);
+	if (m_autoUpdate) reloadVertexes();
+}
+
+void opt::Level::setScale(float x, float y, std::size_t index)
+{
+	m_tiles[index]->setScale(x, y);
+	if (m_autoUpdate) reloadVertexes();
+}
+
+void opt::Level::setScale(const sf::Vector2f& scale, TextureRule textureRule, std::size_t index)
+{
+	m_tiles[index]->setScale(scale, textureRule);
+	if (m_autoUpdate) reloadVertexes();
+}
+
+void opt::Level::setScale(float x, float y, TextureRule textureRule, std::size_t index)
+{
+	m_tiles[index]->setScale(x, y, textureRule);
+	if (m_autoUpdate) reloadVertexes();
+}
+
 inline void opt::Level::resetTiles()
 {
 	for (auto& tuile : m_tiles)
@@ -332,9 +339,6 @@ inline void opt::Level::resetTiles()
 inline void opt::Level::add(const opt::Tile& tile)
 {
 	m_tiles.push_back(tile.clone());
-	m_beginTileIndex.push_back(m_vertexes.size());
-	for (sf::Vertex& sommet : m_tiles[m_tiles.size() - 1]->vertexes())
-		m_vertexes.push_back(sommet);
 	m_renderVertexes.create(m_vertexes.size());
 	if (!m_vertexes.empty())
 		m_renderVertexes.update(m_vertexes.data(), m_vertexes.size(), 0);
@@ -342,11 +346,8 @@ inline void opt::Level::add(const opt::Tile& tile)
 
 inline void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule)
 {
-	m_tiles.push_back(std::make_unique<opt::Tile>(numberSubTexture, sf::FloatRect(size, position),
+	m_tiles.push_back(std::make_unique<opt::Tile>(numberSubTexture, sf::FloatRect(position, size),
 		textureRule, m_subTextures,m_beginTileIndex, m_vertexes));
-	m_beginTileIndex.push_back(m_vertexes.size());
-	for (sf::Vertex& sommet : m_tiles[m_tiles.size() - 1]->vertexes())
-		m_vertexes.push_back(sommet);
 	m_renderVertexes.create(m_vertexes.size());
 	if (!m_vertexes.empty())
 		m_renderVertexes.update(m_vertexes.data(), m_vertexes.size(), 0);
@@ -354,11 +355,8 @@ inline void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& positi
 
 inline void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule, const sf::Vector2f& scale)
 {
-	m_tiles.push_back(std::make_unique<opt::Tile>(numberSubTexture, sf::FloatRect(size, position),
-		textureRule, scale, m_subTextures, m_beginTileIndex, m_vertexes));
-	m_beginTileIndex.push_back(m_vertexes.size());
-	for (sf::Vertex& sommet : m_tiles[m_tiles.size() - 1]->vertexes())
-		m_vertexes.push_back(sommet);
+	m_tiles.push_back(std::make_unique<opt::Tile>(numberSubTexture, sf::FloatRect(position, size),
+		textureRule, m_subTextures, m_beginTileIndex, m_vertexes, scale));
 	m_renderVertexes.create(m_vertexes.size());
 	if (!m_vertexes.empty())
 		m_renderVertexes.update(m_vertexes.data(), m_vertexes.size(), 0);
@@ -368,11 +366,6 @@ inline const sf::Texture& opt::Level::getTexture() const
 {
 	return m_texture;
 }
-
-//inline const int& opt::Level::getSubTextureCount() const
-//{
-//	return m_nbTexture;
-//}
 
 inline const std::vector<sf::FloatRect>& opt::Level::getSubTextures() const
 {
@@ -388,15 +381,11 @@ inline void opt::Level::changeTextureRect(int numberTexture, int index)
 inline void opt::Level::changeColour(const sf::Color& color, int index)
 {
 	m_tiles[index]->changeColour(color);
-	//for (std::size_t i{ m_beginTileIndex[index] }; continueUpdate(static_cast<std::size_t>(index), i); ++i)
-	//	m_vertexes[i].color = color;
 }
 
 inline void opt::Level::resetColour(int index)
 {
 	m_tiles[index]->resetColour();
-	//for (std::size_t i{ m_beginTileIndex[index] }; continueUpdate(static_cast<std::size_t>(index), i); ++i)
-	//	m_vertexes[i].color = sf::Color(0xFFFFFFFF);
 }
 
 inline sf::Color opt::Level::getColour(int index) const
