@@ -342,7 +342,8 @@ inline void opt::Level::add(const opt::Tile& tile)
 
 inline void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule)
 {
-	m_tiles.push_back(std::make_unique<opt::Tile>(m_texture, numberSubTexture, size, position, textureRule, m_subTextures));
+	m_tiles.push_back(std::make_unique<opt::Tile>(numberSubTexture, sf::FloatRect(size, position),
+		textureRule, m_subTextures,m_beginTileIndex, m_vertexes));
 	m_beginTileIndex.push_back(m_vertexes.size());
 	for (sf::Vertex& sommet : m_tiles[m_tiles.size() - 1]->vertexes())
 		m_vertexes.push_back(sommet);
@@ -353,7 +354,8 @@ inline void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& positi
 
 inline void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule, const sf::Vector2f& scale)
 {
-	m_tiles.push_back(std::make_unique<opt::Tile>(m_texture, numberSubTexture, size, position, textureRule, scale, m_subTextures));
+	m_tiles.push_back(std::make_unique<opt::Tile>(numberSubTexture, sf::FloatRect(size, position),
+		textureRule, scale, m_subTextures, m_beginTileIndex, m_vertexes));
 	m_beginTileIndex.push_back(m_vertexes.size());
 	for (sf::Vertex& sommet : m_tiles[m_tiles.size() - 1]->vertexes())
 		m_vertexes.push_back(sommet);

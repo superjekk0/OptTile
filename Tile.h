@@ -48,10 +48,17 @@ namespace opt
 		// TODO : Changer la structure pour que la tuile puisse modifier le vector de sommet ainsi que le vector indiquant le début de chaque objet
 
 		friend Level;
+
+		/// <summary>
+		/// Regarde le nouveau nombre de sommets pour la tuile et bouge dans le vector les sommets au besoin ///
+		/// Looks the new vertexes number for the tile and moves vertexes inside the vector if needed
+		/// </summary>
+		/// <param name="nbVertexes">Nombre de sommets dans la tuile /// Number of vertexes inside Tile</param>
+		void moveVertexes(int nbVertexes);
 	protected:
 		// La texture héritée de la classe contenant la tuile ///
 		// The inherited texture from the class containing the object
-		std::shared_ptr<const sf::Texture> m_texture;		
+		//std::shared_ptr<const sf::Texture> m_texture;		
 		// Donne la position de la case au coin supérieur gauche ///
 		// Gives the position at the top-left corner of the tile
 		sf::Vector2f m_position;							
@@ -106,7 +113,9 @@ namespace opt
 		/// <param name="subTextureCount">Nombre de sous-textures /// Number of subtextures</param>
 		/// <param name="textureRule">Règle appliquée à la sous-texture /// Rule applied to the subtexture</param>
 		/// <param name="subTextures">Positions et tailles des sous-textures /// Positions and sizes of the subtextures</param>
-		Tile(const sf::Texture& texture, int noTuileDebutTexture, const sf::Vector2f& desiredSize, const sf::Vector2f& position, TextureRule textureRule, const std::vector<sf::FloatRect>& subTextures);
+		Tile(int noTuileDebutTexture, const sf::FloatRect& tileRect, TextureRule textureRule,
+			const std::vector<sf::FloatRect>& subTextures, std::vector<std::size_t>& beginTiles,
+			std::vector<sf::Vertex>& vertices);
 
 		/// <summary>
 		/// Constructeur d'une tuile mettant le ratio de la texture par rapport à la texture à l'échelle demandée ///
@@ -120,7 +129,9 @@ namespace opt
 		/// <param name="textureRule">Règle appliquée à la sous-texture /// Rule applied to the subtexture</param>
 		/// <param name="scale">Zoom appliqué à la texture /// Zoom applied to the texture</param>
 		/// <param name="subTextures">Positions et tailles des sous-textures /// Positions and sizes of the subtextures</param>
-		Tile(const sf::Texture& texture, int noTuileDebutTexture, const sf::Vector2f& desiredSize, const sf::Vector2f& position, TextureRule textureRule, const sf::Vector2f& scale, const std::vector<sf::FloatRect>& subTextures);
+		Tile(int noTuileDebutTexture, const sf::FloatRect& tileRect, TextureRule textureRule,
+			const sf::Vector2f& scale, const std::vector<sf::FloatRect>& subTextures,
+			std::vector<std::size_t>& beginTiles, std::vector<sf::Vertex>& vertices);
 
 		/// <summary>
 		/// Retourne une référence de la liste générique de sommets (pour pouvoir tout dessiner en un appel de la méthode draw) ///

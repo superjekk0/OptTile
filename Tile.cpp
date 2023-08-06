@@ -2,27 +2,10 @@
 #include "Tile.h"
 #include "Tile.h"
 
-inline void opt::Tile::intializeVertexes()
+void opt::Tile::moveVertexes(int nbVertexes)
 {
-	//m_vertexes->resize(6);
+	m_vertexes->resize(m_vertexes->size() - m_tileVertexesCount + nbVertexes);
 
-	if (!m_texture || !m_subTextures)
-	{
-		m_textureRule = TextureRule::fill_space;
-		(*m_vertexes)[0].position = m_position;
-		(*m_vertexes)[1].position = m_position + sf::Vector2f(0.f, m_tileSize.y);
-		(*m_vertexes)[2].position = m_position + sf::Vector2f(m_tileSize.x, 0.f);
-		(*m_vertexes)[3].position = (*m_vertexes)[1].position;
-		(*m_vertexes)[4].position = (*m_vertexes)[2].position;
-		(*m_vertexes)[5].position = m_position + m_tileSize;
-		for (auto& sommet : *m_vertexes)
-			sommet.color = m_colour;
-		return;
-	}
-
-	int nbVertexes{ static_cast<int>(std::ceil(m_tileSize.x / m_subTextures->at(m_subTextureIndex).width * m_scale.x)
-	 * std::ceil(m_tileSize.y / m_subTextures->at(m_subTextureIndex).height * m_scale.y)
-	 * 6) }; //Pourquoi 6? Car il s'agit du nombre de points pour faire une tuile en carré.
 	int difference{ nbVertexes - static_cast<int>(m_tileVertexesCount) }; // On met dans cet ordre pour que si le nombre est plus petit, le vector rappetisse
 	if (difference < 0 && m_tileIndex < m_beginTiles->size() - 1)
 	{
@@ -38,6 +21,32 @@ inline void opt::Tile::intializeVertexes()
 			m_vertexes->at(i) = m_vertexes->at(i - difference);
 		m_tileVertexesCount = nbVertexes;
 	}
+}
+
+inline void opt::Tile::intializeVertexes()
+{
+	//m_vertexes->resize(6);
+
+	if (!m_subTextures || m_tileSize == sf::Vector2f())
+	{
+		moveVertexes(6);
+		m_textureRule = TextureRule::fill_space;
+		(*m_vertexes)[m_beginTiles->at(m_tileIndex)].position = m_position;
+		(*m_vertexes)[m_beginTiles->at(m_tileIndex) + 1].position = m_position + sf::Vector2f(0.f, m_tileSize.y);
+		(*m_vertexes)[m_beginTiles->at(m_tileIndex) + 2].position = m_position + sf::Vector2f(m_tileSize.x, 0.f);
+		(*m_vertexes)[m_beginTiles->at(m_tileIndex) + 3].position = (*m_vertexes)[1].position;
+		(*m_vertexes)[m_beginTiles->at(m_tileIndex) + 4].position = (*m_vertexes)[2].position;
+		(*m_vertexes)[m_beginTiles->at(m_tileIndex) + 5].position = m_position + m_tileSize;
+		for (int i{0}; i < m_tileVertexesCount; ++i)
+			(*m_vertexes)[i + m_beginTiles->at(m_tileIndex)].color = m_colour;
+		return;
+	}
+
+	int nbVertexes{ static_cast<int>(std::ceil(m_tileSize.x / m_subTextures->at(m_subTextureIndex).width * m_scale.x)
+	 * std::ceil(m_tileSize.y / m_subTextures->at(m_subTextureIndex).height * m_scale.y)
+	 * 6) }; // Pourquoi on multiplie par 6? Car il faut 6 sommets pour faire un carré de tuile
+	moveVertexes(nbVertexes);
+
 	sf::Vector2f coinGaucheSommet;
 	std::size_t indexSommet{ m_beginTiles->at(m_tileIndex) };
 	sf::Vector2f textureSize{m_subTextures->at(m_subTextureIndex).width, m_subTextures->at(m_subTextureIndex).height};
@@ -97,25 +106,30 @@ inline void opt::Tile::intializeVertexes()
 	}
 }
 
-inline opt::Tile::Tile() : m_texture{ nullptr }, m_subTextureIndex{ 0 }, m_textureRule{ TextureRule::repeat_texture },
-m_subTextures{ nullptr }, m_beginTiles{ nullptr }, m_tileIndex{ 0ull }, m_vertexes{ nullptr }
+inline opt::Tile::Tile() : m_subTextureIndex{ 0 }, m_textureRule{ TextureRule::repeat_texture },
+m_subTextures{ nullptr }, m_beginTiles{ nullptr }, m_tileIndex{ 0ull }, m_vertexes{ nullptr }, m_tileVertexesCount{0ull}
 {}
 
-inline opt::Tile::Tile(const sf::Texture& texture, int noTuileDebutTexture, const sf::Vector2f& desiredSize,
-	const sf::Vector2f& position, TextureRule textureRule, const sf::Vector2f& scale, const	std::vector<sf::FloatRect>& subTextures) :
-	m_texture{ &texture }, m_subTextureIndex{ noTuileDebutTexture }, m_textureRule{ textureRule },
-	m_scale{ scale }, m_tileSize{ desiredSize }, m_subTextures{ &subTextures }, m_position{ position }
+inline opt::Tile::Tile(int noTuileDebutTexture, const sf::FloatRect& tileRect, TextureRule textureRule,
+	const sf::Vector2f& scale, const std::vector<sf::FloatRect>& subTextures,
+	std::vector<std::size_t>& beginTiles, std::vector<sf::Vertex>& vertices) :
+	m_subTextureIndex{ noTuileDebutTexture }, m_textureRule{ textureRule },	m_scale{ scale },
+	m_tileSize{ tileRect.getSize()}, m_subTextures{&subTextures}, m_position{ tileRect.getPosition()},
+	m_tileVertexesCount{0ull}, m_beginTiles{&beginTiles}, m_vertexes{&vertices}, m_tileIndex{m_beginTiles->size()}
 {
+	m_beginTiles->push_back(m_vertexes->size());
 	intializeVertexes();
 }
 
 
-inline opt::Tile::Tile(const sf::Texture& texture, int noTuileDebutTexture, const sf::Vector2f& desiredSize,
-	const sf::Vector2f& position, TextureRule textureRule, const std::vector<sf::FloatRect>& subTextures) :
-	m_texture{ &texture }, m_subTextureIndex{ noTuileDebutTexture }, //m_texturePosition{ texture.getSize().x / static_cast<float>(subTextureCount) * noTuileDebutTexture , 0.f },
-	//m_textureSize{ static_cast<float>(texture.getSize().x / subTextureCount) , static_cast<float>(texture.getSize().y) },
-	m_textureRule{ textureRule }, m_scale{ 1.f, 1.f }, m_tileSize{ desiredSize }, m_subTextures{ &subTextures }, m_position{ position }
+inline opt::Tile::Tile(int noTuileDebutTexture, const sf::FloatRect& tileRect,
+	TextureRule textureRule, const std::vector<sf::FloatRect>& subTextures, 
+	std::vector<std::size_t>& beginTiles, std::vector<sf::Vertex>& vertices) :
+	m_subTextureIndex{ noTuileDebutTexture },m_textureRule{ textureRule }, m_scale{ 1.f, 1.f },
+	m_tileSize{ tileRect.getSize() }, m_subTextures{&subTextures}, m_position{tileRect.getPosition()},
+	m_tileVertexesCount{0ull}, m_beginTiles{&beginTiles}, m_vertexes{&vertices}, m_tileIndex{m_beginTiles->size()}
 {
+	m_beginTiles->push_back(m_vertexes->size());
 	intializeVertexes();
 }
 
