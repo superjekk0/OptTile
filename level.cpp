@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Level.h"
 #include "Exceptions.h"
+#include <cmath>
 
 template <typename T>
 inline T opt::parse(const std::string& line)
@@ -50,7 +51,7 @@ inline void opt::Level::reloadVertexes()
 	}
 
 	m_renderVertexes.create(m_vertexes.size());
-	m_renderVertexes.update(&m_vertexes[0].get(), m_vertexes.size(), 0);
+	m_renderVertexes.update(&m_vertexes[0], m_vertexes.size(), 0);
 }
 
 inline bool opt::Level::continueUpdate(std::size_t index, std::size_t itterator)
@@ -65,8 +66,8 @@ int opt::Level::vertexesChanges()
 {
 	for (int i{ 0 }; i < m_beginTileIndex.size(); ++i)
 	{
-		if (&m_vertexes[m_beginTileIndex[i]].get() != m_tiles[i]->vertexes().data()
-			|| m_tiles[i]->vertexes().size() != 
+		if (&m_vertexes != &m_tiles[i]->vertexes()
+			|| m_tiles[i]->vertexes().size() != //Devra être changé par une méthode nommé vertexCount (puisqu'il s'agit du même vector en théorie)
 			(i == m_beginTileIndex.size() - 1 ? m_vertexes.size() - m_beginTileIndex[i] : m_beginTileIndex[i + 1] - m_beginTileIndex[i]))
 			return i;
 	}
@@ -153,7 +154,7 @@ void opt::Level::setPosition(float x, float y, std::size_t index)
 	sf::Vector2f deplacement{sf::Vector2f(x, y) - m_tiles[index]->getPosition()};
 	for (std::size_t i{m_beginTileIndex[index]}; continueUpdate(index, i); ++i)
 	{
-		m_vertexes[i].get().position += deplacement;
+		m_vertexes[i].position += deplacement;
 	}
 }
 
@@ -163,7 +164,7 @@ void opt::Level::setPosition(const sf::Vector2f& position, std::size_t index)
 	sf::Vector2f deplacement{position - m_tiles[index]->getPosition()};
 	for (std::size_t i{m_beginTileIndex[index]}; continueUpdate(index, i); ++i)
 	{
-		m_vertexes[i].get().position += deplacement;
+		m_vertexes[i].position += deplacement;
 	}
 }
 
@@ -323,6 +324,7 @@ inline void opt::Level::resetTiles()
 	for (auto& tuile : m_tiles)
 		tuile.release();
 	m_tiles.resize(0);
+	m_beginTileIndex.resize(0);
 	m_renderVertexes.create(0);
 	m_vertexes.resize(0);
 }
@@ -334,8 +336,8 @@ inline void opt::Level::add(const opt::Tile& tile)
 	for (sf::Vertex& sommet : m_tiles[m_tiles.size() - 1]->vertexes())
 		m_vertexes.push_back(sommet);
 	m_renderVertexes.create(m_vertexes.size());
-	if (m_vertexes.size() > 0)
-		m_renderVertexes.update(&m_vertexes[0].get(), m_vertexes.size(), 0);
+	if (!m_vertexes.empty())
+		m_renderVertexes.update(m_vertexes.data(), m_vertexes.size(), 0);
 }
 
 inline void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule)
@@ -345,8 +347,8 @@ inline void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& positi
 	for (sf::Vertex& sommet : m_tiles[m_tiles.size() - 1]->vertexes())
 		m_vertexes.push_back(sommet);
 	m_renderVertexes.create(m_vertexes.size());
-	if (m_vertexes.size() > 0)
-		m_renderVertexes.update(&m_vertexes[0].get(), m_vertexes.size(), 0);
+	if (!m_vertexes.empty())
+		m_renderVertexes.update(m_vertexes.data(), m_vertexes.size(), 0);
 }
 
 inline void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule, const sf::Vector2f& scale)
@@ -356,8 +358,8 @@ inline void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& positi
 	for (sf::Vertex& sommet : m_tiles[m_tiles.size() - 1]->vertexes())
 		m_vertexes.push_back(sommet);
 	m_renderVertexes.create(m_vertexes.size());
-	if (m_vertexes.size() > 0)
-		m_renderVertexes.update(&m_vertexes[0].get(), m_vertexes.size(), 0);
+	if (!m_vertexes.empty())
+		m_renderVertexes.update(m_vertexes.data(), m_vertexes.size(), 0);
 }
 
 inline const sf::Texture& opt::Level::getTexture() const
@@ -413,4 +415,9 @@ inline sf::Vector2f opt::Level::getSubTextureSize(int index) const
 inline std::size_t opt::Level::size() const
 {
 	return m_tiles.size();
+}
+
+std::vector<sf::Vertex>* opt::Level::vertexAddress()
+{
+	return &m_vertexes;
 }

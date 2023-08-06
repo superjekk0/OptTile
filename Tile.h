@@ -16,6 +16,8 @@
 
 namespace opt
 {
+	class OPTTILE_API Level;
+
 	enum class OPTTILE_API TextureRule {
 		// La texture sera répétée dans la tuile. Augmenter l'échelle augmentera simplement la taille de la tuile, sans augmenter la taille des textures
 		// The texture is repeated inside the tile. Increasing the scale only increased the size of the tile, without inflating the texture zoom
@@ -42,6 +44,10 @@ namespace opt
 	/// Object allowing to wrap a few SFML-linked inside this class. Needs however another object to be drawn, such as opt::Level
 	/// </summary>
 	class OPTTILE_API Tile {
+	private:
+		// TODO : Changer la structure pour que la tuile puisse modifier le vector de sommet ainsi que le vector indiquant le début de chaque objet
+
+		friend Level;
 	protected:
 		// La texture héritée de la classe contenant la tuile ///
 		// The inherited texture from the class containing the object
@@ -52,9 +58,18 @@ namespace opt
 		// Donne la taille de la case ///
 		// Gives the tile's size
 		sf::Vector2f m_tileSize;											
-		// L'ensemble des points qui composent l'objet dessinable ///
-		// Entirety of vertexes composing the tile
-		std::vector<sf::Vertex> m_vertexes;									
+		// L'ensemble des points du niveau ///
+		// Entirety of vertexes creating the Level
+		std::vector<sf::Vertex>* m_vertexes;
+		// Désigne combien il y a de sommets pour la tuile ///
+		// Designates how many vertexes there are for the Tile
+		std::size_t m_tileVertexesCount;
+		// Indique le commencement de chaque tuile ///
+		// Indicates the beginning index of each Tile
+		std::vector<std::size_t>* m_beginTiles;
+		// Indique l'index de la tuile (this) ///
+		// Indicate the tile index (this)
+		std::size_t m_tileIndex;
 		// Règle régissant le comportement d'une texture lorsque la taille ou l'échelle est changée ///
 		// Texture rule dictating the texture's behaviour when resized or rescaled
 		TextureRule m_textureRule;										
@@ -63,7 +78,7 @@ namespace opt
 		sf::Vector2f m_scale{ 1.f, 1.f };									
 		// Indique le numéro de sous-texture (utile lorsque la texture est changée) ///
 		// Indicates the subtexture number (usefull when texture is changed)
-		int m_numberSubTexture;												
+		int m_subTextureIndex;												
 		// Indique les rectangles de sous-textures (peuvent être asymétriques ///
 		// Indicates subtexture's rectangles (they may be asymetrical)
 		std::shared_ptr<const std::vector<sf::FloatRect>> m_subTextures;
@@ -159,6 +174,7 @@ namespace opt
 		/// </summary>
 		sf::Vector2f getPosition() const;
 
+	private:
 		/// <summary>
 		/// Met la tuile au zoom spécifié selon la règle de texture (consulter la documentation pour plus de détails) ///
 		/// Puts the tile at the specified zoom according to the texture rule (consult documentation for more details)
@@ -251,6 +267,7 @@ namespace opt
 		/// </summary>
 		/// <param name="textureRule">Nouvelle règle de texture /// New texture rule</param>
 		void setTextureRule(TextureRule textureRule);
+	public:
 
 		/// <summary>
 		/// Obtient la règle de texture de la tuile ///
@@ -354,6 +371,13 @@ namespace opt
 		/// Returns the index used for subtexture by the tile
 		/// </summary>
 		int subTextureIndex() const;
+
+		/// <summary>
+		/// Retoune le nombre de sommets composant la tuile ///
+		/// Returns the number of vertexes composing the Tile
+		/// </summary>
+		std::size_t vertexCount() const;
+
 	};
 }
 #endif 
