@@ -167,7 +167,7 @@ namespace opt
 		/// Recharge la liste générique de sommets et l'index de départ des tuiles par rapport aux sommets. Utile lorsque plusieurs tuiles ont été modifiées directement ///
 		/// Reloads the vertexes vector and the beginning index of the tiles for their vertexes. Usefull when many tiles have been modified without being updated by the level
 		/// </summary>
-		void reloadVertexes();
+		void reloadBuffer();
 
 		/// <summary>
 		/// Charge en mémoire la texture désirée et met le compteur de cases à 0 ///
@@ -366,6 +366,23 @@ namespace opt
 		void setScale(float x, float y, TextureRule textureRule, std::size_t index);
 
 		/// <summary>
+		/// Change le facteur d'agrandissement de la tuile indiquée en paramètre après avoir changé la règle de texture ///
+		/// Changes the zoom of the Tile indicated in parameter after having changed the texture rule
+		/// </summary>
+		/// <param name="scale">Facteur d'agrandissement vertical et horizontal /// Horizontal and vertical zoom factor</param>
+		/// <param name="textureRule">Nouvelle règle de texture /// New texture rule</param>
+		/// <param name="index">Index de la tuile /// Tile index</param>
+		void setScale(float scale, TextureRule textureRule, std::size_t index);
+
+		/// <summary>
+		/// Change le facteur d'agrandissement de la tuile indiquée en paramètre après avoir changé la règle de texture ///
+		/// Changes the zoom of the Tile indicated in parameter after having changed the texture rule
+		/// </summary>
+		/// <param name="scale">Facteur d'agrandissement vertical et horizontal /// Horizontal and vertical zoom factor</param>
+		/// <param name="index">Index de la tuile /// Tile index</param>
+		void setScale(float scale, std::size_t index);
+
+		/// <summary>
 		/// Réinitialise la liste générique de sommets (pour le rendu) et la liste générique de tuiles /// 
 		/// Resets the vertexes' vector (for rendering) and the tile vector
 		/// </summary>
@@ -471,11 +488,23 @@ namespace opt
 		std::size_t size() const;
 
 		/// <summary>
-		/// Retourne l'adresse des sommets de l'ensemble des tuiles ///
+		/// Retourne une référence des sommets de l'ensemble des tuiles ///
 		/// Returns all vertexes of every Tile
 		/// </summary>
-		std::vector<sf::Vertex>* vertexAddress();
+		std::vector<sf::Vertex>& vertices();
 
+		/// <summary>
+		/// Retourne une référence des index de début des tuiles ///
+		/// Returns a reference 
+		/// </summary>
+		std::vector<std::size_t>& beginTileIndexes();
+
+		/// <summary>
+		/// Indique si le tampon doit se mettre à la bonne taille à chaque modification ///
+		/// Indicates if the buffer has to be resized at each modification
+		/// </summary>
+		/// <param name="autoUpdate">Doit être mis à jour à chaque changement /// Must update at each change</param>
+		void bufferAutoUpdate(bool autoUpdate);
 	};
 
 	template <class T>
