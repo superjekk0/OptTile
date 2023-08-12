@@ -191,17 +191,24 @@ namespace opt
 
 		/// <summary>
 		/// Retourne une référence de la case à l'index spécifié ///
-		/// Returns a raw pointer of the tile at the specificated index
+		/// Returns a reference of the tile at the specificated index
 		/// </summary>
 		/// <param name="index">Index de la tuile /// Tile index</param>
-		opt::Tile* const operator[](int index);
+		Tile& operator[](int index);
+
+		/// <summary>
+		/// Retourne une référence de la case à l'index spécifié ///
+		/// Returns a reference of the tile at the specificated index
+		/// </summary>
+		/// <param name="index">Index de la tuile /// Tile index</param>
+		const Tile& operator[](int index) const;
 
 		/// <summary>
 		/// Modifie la classe Level pour la transformer en l'autre objet Level. Copie tout et bouge tous les unique_ptr /// 
 		/// Modifies the Level to make it become the other Level. Copies everything and move every unique_ptr
 		/// </summary>
 		/// <param name="other">L'autre objet Level /// The other Level</param>
-		opt::Level& operator=(opt::Level&& other) noexcept;
+		Level& operator=(Level&& other) noexcept;
 
 		/// <summary>
 		/// Dessine le niveau sur l'élément SFML cible ///

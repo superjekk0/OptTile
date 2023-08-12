@@ -4,7 +4,7 @@
 #include <cmath>
 
 template <typename T>
-inline T opt::parse(const std::string& line)
+T opt::parse(const std::string& line)
 {
 	T valeur;
 	std::stringstream conversion{line};
@@ -18,7 +18,7 @@ inline T opt::parse(const std::string& line)
 /// </summary>
 /// <param name="str">Chaîne de caractères de base</param>
 /// <param name="separator">Caractère servant à séparer</param>
-inline std::vector<std::string> opt::splitString(std::string str, const char separator)
+std::vector<std::string> opt::splitString(std::string str, const char separator)
 {
 	std::vector<std::string> listStrings{};
 	listStrings.reserve(4);
@@ -32,12 +32,13 @@ inline std::vector<std::string> opt::splitString(std::string str, const char sep
 	return listStrings;
 }
 
-inline void opt::Level::reloadBuffer()
+void opt::Level::reloadBuffer()
 {
 	m_renderVertexes.create(m_vertexes.size());
+	m_renderVertexes.update(m_vertexes.data());
 }
 
-inline bool opt::Level::continueUpdate(std::size_t index, std::size_t itterator)
+bool opt::Level::continueUpdate(std::size_t index, std::size_t itterator)
 {
 	if (index >= m_beginTileIndex.size() - 1)
 		return itterator < m_vertexes.size();
@@ -57,18 +58,18 @@ inline bool opt::Level::continueUpdate(std::size_t index, std::size_t itterator)
 //	return -1;
 //}
 
-inline opt::Level::Level() : m_renderVertexes{ sf::Triangles, sf::VertexBuffer::Dynamic }, m_autoUpdate{ true }
+opt::Level::Level() : m_renderVertexes{ sf::Triangles, sf::VertexBuffer::Dynamic }, m_autoUpdate{ true }
 {
 
 }
 
-inline opt::Level::~Level()
+opt::Level::~Level()
 {
 	for (auto& tile : m_tiles)
 		tile.release();
 }
 
-inline opt::Level::Level(const std::string& pPathTexture, std::size_t pNbTextures) : m_renderVertexes{ sf::Triangles, sf::VertexBuffer::Dynamic }, m_autoUpdate{ true }
+opt::Level::Level(const std::string& pPathTexture, std::size_t pNbTextures) : m_renderVertexes{ sf::Triangles, sf::VertexBuffer::Dynamic }, m_autoUpdate{ true }
 {
 	if (!m_texture.loadFromFile(pPathTexture))
 		throw opt::LoadException(pPathTexture);
@@ -83,9 +84,14 @@ inline opt::Level::Level(const std::string& pPathTexture, std::size_t pNbTexture
 	}
 }
 
-inline opt::Tile* const opt::Level::operator[](int index)
+opt::Tile& opt::Level::operator[](int index)
 {
-	return m_tiles[index].get();
+	return *m_tiles[index];
+}
+
+const opt::Tile& opt::Level::operator[](int index) const
+{
+	return *m_tiles[index];
 }
 
 opt::Level& opt::Level::operator=(opt::Level&& other) noexcept
@@ -101,28 +107,30 @@ opt::Level& opt::Level::operator=(opt::Level&& other) noexcept
 	return *this;
 }
 
-inline void opt::Level::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void opt::Level::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	states.texture = &m_texture;
 
 	//states.transform = m_transformations;
 
-	if (m_vertexes.size() > 0)
+	if (!m_vertexes.empty())
 		target.draw(m_renderVertexes, states);
 }
 
-inline void opt::Level::move(float offsetX, float offsetY, std::size_t index)
+void opt::Level::move(float offsetX, float offsetY, std::size_t index)
 {
 	m_tiles[index]->move(offsetX, offsetY);
+	if (m_autoUpdate) reloadBuffer();
 	//for (std::size_t i{ m_beginTileIndex[index] }; continueUpdate(index, i); ++i)
 	//{
 	//	m_vertexes[i].position += sf::Vector2f(offsetX, offsetY);
 	//}
 }
 
-inline void opt::Level::move(const sf::Vector2f& offset, std::size_t index)
+void opt::Level::move(const sf::Vector2f& offset, std::size_t index)
 {
 	m_tiles[index]->move(offset);
+	if (m_autoUpdate) reloadBuffer();
 	//for (std::size_t i{ m_beginTileIndex[index] }; continueUpdate(index, i); ++i)
 	//{
 	//	m_vertexes[i].position += offset;
@@ -133,51 +141,53 @@ inline void opt::Level::move(const sf::Vector2f& offset, std::size_t index)
 void opt::Level::setPosition(float x, float y, std::size_t index)
 {
 	m_tiles[index]->setPosition(x, y);
-	sf::Vector2f deplacement{sf::Vector2f(x, y) - m_tiles[index]->getPosition()};
-	for (std::size_t i{m_beginTileIndex[index]}; continueUpdate(index, i); ++i)
-	{
-		m_vertexes[i].position += deplacement;
-	}
+	if (m_autoUpdate) reloadBuffer();
+	//sf::Vector2f deplacement{sf::Vector2f(x, y) - m_tiles[index]->getPosition()};
+	//for (std::size_t i{m_beginTileIndex[index]}; continueUpdate(index, i); ++i)
+	//{
+	//	m_vertexes[i].position += deplacement;
+	//}
 }
 
 void opt::Level::setPosition(const sf::Vector2f& position, std::size_t index)
 {
 	m_tiles[index]->setPosition(position);
-	sf::Vector2f deplacement{position - m_tiles[index]->getPosition()};
-	for (std::size_t i{m_beginTileIndex[index]}; continueUpdate(index, i); ++i)
-	{
-		m_vertexes[i].position += deplacement;
-	}
+	if (m_autoUpdate) reloadBuffer();
+	//sf::Vector2f deplacement{position - m_tiles[index]->getPosition()};
+	//for (std::size_t i{m_beginTileIndex[index]}; continueUpdate(index, i); ++i)
+	//{
+	//	m_vertexes[i].position += deplacement;
+	//}
 }
 
-inline void opt::Level::resize(float x, float y, std::size_t index)
+void opt::Level::resize(float x, float y, std::size_t index)
 {
 	m_tiles[index]->resize(x, y);
 	if (m_autoUpdate) reloadBuffer();
 }
 
-inline void opt::Level::resize(const sf::Vector2f& size, std::size_t index)
+void opt::Level::resize(const sf::Vector2f& size, std::size_t index)
 {
 	//std::size_t nbSommets{m_tiles[index]->vertexes().size()};
 	m_tiles[index]->resize(size);
 	if (m_autoUpdate) reloadBuffer();
 }
 
-inline void opt::Level::resize(float x, float y, TextureRule textureRule, std::size_t index)
+void opt::Level::resize(float x, float y, TextureRule textureRule, std::size_t index)
 {
-	std::size_t nbSommets{m_tiles[index]->vertexes().size()};
+	//std::size_t nbSommets{m_tiles[index]->vertexes().size()};
 	m_tiles[index]->resize(x, y, textureRule);
 	if (m_autoUpdate) reloadBuffer();
 }
 
-inline void opt::Level::resize(const sf::Vector2f& size, TextureRule textureRule, std::size_t index)
+void opt::Level::resize(const sf::Vector2f& size, TextureRule textureRule, std::size_t index)
 {
-	std::size_t nbSommets{m_tiles[index]->vertexes().size()};
+	//std::size_t nbSommets{m_tiles[index]->vertexes().size()};
 	m_tiles[index]->resize(size, textureRule);
 	if (m_autoUpdate) reloadBuffer();
 }
 
-inline void opt::Level::loadTexture(const std::string& path, int subTextureCount)
+void opt::Level::loadTexture(const std::string& path, int subTextureCount)
 {
 	if (!m_texture.loadFromFile(path))
 		throw opt::LoadException(path);
@@ -198,7 +208,7 @@ inline void opt::Level::loadTexture(const std::string& path, int subTextureCount
 	if (m_autoUpdate) reloadBuffer();
 }
 
-inline void opt::Level::loadTexture(const std::string& path, std::vector<sf::FloatRect>& subTextures)
+void opt::Level::loadTexture(const std::string& path, std::vector<sf::FloatRect>& subTextures)
 {
 	if (!m_texture.loadFromFile(path))
 		throw opt::LoadException(path);
@@ -220,7 +230,7 @@ inline void opt::Level::loadTexture(const std::string& path, std::vector<sf::Flo
 	if (m_autoUpdate) reloadBuffer();
 }
 
-inline void opt::Level::loadTexture(const std::string& path, const std::string& subTexturePath)
+void opt::Level::loadTexture(const std::string& path, const std::string& subTexturePath)
 {
 	if (!m_texture.loadFromFile(path))
 		throw opt::LoadException(path);
@@ -251,7 +261,7 @@ inline void opt::Level::loadTexture(const std::string& path, const std::string& 
 	if (m_autoUpdate) reloadBuffer();
 }
 
-inline void opt::Level::loadTexture(const sf::Texture& texture, int subTextureCount)
+void opt::Level::loadTexture(const sf::Texture& texture, int subTextureCount)
 {
 	m_texture = texture;
 	//m_nbTexture = subTextureCount;
@@ -270,7 +280,7 @@ inline void opt::Level::loadTexture(const sf::Texture& texture, int subTextureCo
 	if (m_autoUpdate) reloadBuffer();
 }
 
-inline void opt::Level::loadTexture(const sf::Texture& texture, std::vector<sf::FloatRect>& subTextures)
+void opt::Level::loadTexture(const sf::Texture& texture, std::vector<sf::FloatRect>& subTextures)
 {
 	m_texture = texture;
 	//m_nbTexture = subTextures.size();
@@ -282,7 +292,7 @@ inline void opt::Level::loadTexture(const sf::Texture& texture, std::vector<sf::
 	if (m_autoUpdate) reloadBuffer();
 }
 
-inline void opt::Level::loadTexture(const sf::Texture& texture, const std::string& subTexturePath)
+void opt::Level::loadTexture(const sf::Texture& texture, const std::string& subTexturePath)
 {
 	m_texture = texture;
 	std::fstream fichier{subTexturePath};
@@ -348,7 +358,7 @@ void opt::Level::setScale(float scale, std::size_t index)
 	if (m_autoUpdate) reloadBuffer();
 }
 
-inline void opt::Level::resetTiles()
+void opt::Level::resetTiles()
 {
 	for (auto& tuile : m_tiles)
 		tuile.release();
@@ -358,74 +368,76 @@ inline void opt::Level::resetTiles()
 	m_vertexes.resize(0);
 }
 
-inline void opt::Level::add(const opt::Tile& tile)
+void opt::Level::add(const opt::Tile& tile)
 {
 	m_tiles.push_back(tile.clone());
 	reloadBuffer();
-	if (!m_vertexes.empty())
-		m_renderVertexes.update(m_vertexes.data(), m_vertexes.size(), 0);
+	//if (!m_vertexes.empty())
+	//	m_renderVertexes.update(m_vertexes.data(), m_vertexes.size(), 0);
 }
 
-inline void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule)
+void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule)
 {
 	m_tiles.push_back(std::make_unique<opt::Tile>(numberSubTexture, sf::FloatRect(position, size),
 		textureRule, m_subTextures, m_beginTileIndex, m_vertexes));
 	reloadBuffer();
-	if (!m_vertexes.empty())
-		m_renderVertexes.update(m_vertexes.data(), m_vertexes.size(), 0);
+	//if (!m_vertexes.empty())
+	//	m_renderVertexes.update(m_vertexes.data(), m_vertexes.size(), 0);
 }
 
-inline void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule, const sf::Vector2f& scale)
+void opt::Level::add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule, const sf::Vector2f& scale)
 {
 	m_tiles.push_back(std::make_unique<opt::Tile>(numberSubTexture, sf::FloatRect(position, size),
 		textureRule, m_subTextures, m_beginTileIndex, m_vertexes, scale));
 	reloadBuffer();
-	if (!m_vertexes.empty())
-		m_renderVertexes.update(m_vertexes.data(), m_vertexes.size(), 0);
+	//if (!m_vertexes.empty())
+	//	m_renderVertexes.update(m_vertexes.data(), m_vertexes.size(), 0);
 }
 
-inline const sf::Texture& opt::Level::getTexture() const
+const sf::Texture& opt::Level::getTexture() const
 {
 	return m_texture;
 }
 
-inline const std::vector<sf::FloatRect>& opt::Level::getSubTextures() const
+const std::vector<sf::FloatRect>& opt::Level::getSubTextures() const
 {
 	return m_subTextures;
 }
 
-inline void opt::Level::changeTextureRect(int numberTexture, int index)
+void opt::Level::changeTextureRect(int numberTexture, int index)
 {
 	m_tiles[index]->changeTextureRect(numberTexture);
-	reloadBuffer();
+	if (m_autoUpdate) reloadBuffer();
 }
 
-inline void opt::Level::changeColour(const sf::Color& color, int index)
+void opt::Level::changeColour(const sf::Color& color, int index)
 {
 	m_tiles[index]->changeColour(color);
+	if (m_autoUpdate) reloadBuffer();
 }
 
-inline void opt::Level::resetColour(int index)
+void opt::Level::resetColour(int index)
 {
 	m_tiles[index]->resetColour();
+	if (m_autoUpdate) reloadBuffer();
 }
 
-inline sf::Color opt::Level::getColour(int index) const
+sf::Color opt::Level::getColour(int index) const
 {
 	return m_tiles[index]->getColour();
 }
 
-inline sf::FloatRect opt::Level::getSubTexture(int index) const
+sf::FloatRect opt::Level::getSubTexture(int index) const
 {
 	return m_subTextures[index];
 }
 
-inline sf::Vector2f opt::Level::getSubTextureSize(int index) const
+sf::Vector2f opt::Level::getSubTextureSize(int index) const
 {
 	return sf::Vector2f(m_subTextures[index].width, m_subTextures[index].height);
 }
 
-inline std::size_t opt::Level::size() const
+std::size_t opt::Level::size() const
 {
 	return m_tiles.size();
 }

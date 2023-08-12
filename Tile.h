@@ -67,13 +67,13 @@ namespace opt
 		sf::Vector2f m_tileSize;											
 		// L'ensemble des points du niveau ///
 		// Entirety of vertexes creating the Level
-		std::vector<sf::Vertex>* m_vertexes;
+		std::shared_ptr<std::vector<sf::Vertex>> m_vertexes;
 		// Désigne combien il y a de sommets pour la tuile ///
 		// Designates how many vertexes there are for the Tile
 		std::size_t m_tileVertexesCount;
 		// Indique le commencement de chaque tuile ///
 		// Indicates the beginning index of each Tile
-		std::vector<std::size_t>* m_beginTiles;
+		std::shared_ptr<std::vector<std::size_t>> m_beginTiles;
 		// Indique l'index de la tuile (this) ///
 		// Indicate the tile index (this)
 		std::size_t m_tileIndex;
@@ -103,19 +103,12 @@ namespace opt
 		Tile();
 
 		/// <summary>
-		/// Constructeur d'une tuile mettant par défaut le ratio de la texture à 1:1 (même si la sous-texture n'est pas carrée) ///
-		/// This constructor puts by default the scale at 1:1 (even in case when the subtexture in not squre)
+		/// Constructeur n'apportant que le minimum pour fonctionner, soit les références à absolument avoir ///
+		/// Constructor bringing only the minimum to make the Tile work, which are the absolutely necessary references to have
 		/// </summary>
-		/// <param name="texture">Référence de la texture utilisée (provenant souvent du niveau) /// Reference of the utilised texture (most likely coming from the level)</param>
-		/// <param name="noTuileDebutTexture">Numéro de sous-texture utilisé /// Number of the used texture</param>
-		/// <param name="desiredSize">Taille de la tuile /// Tile size</param>
-		/// <param name="position">Position au coin supérieur gauche /// Position at top left corner</param>
-		/// <param name="subTextureCount">Nombre de sous-textures /// Number of subtextures</param>
-		/// <param name="textureRule">Règle appliquée à la sous-texture /// Rule applied to the subtexture</param>
-		/// <param name="subTextures">Positions et tailles des sous-textures /// Positions and sizes of the subtextures</param>
-		//Tile(int noTuileDebutTexture, const sf::FloatRect& tileRect, TextureRule textureRule,
-		//	const std::vector<sf::FloatRect>& subTextures, std::vector<std::size_t>& beginTiles,
-		//	std::vector<sf::Vertex>& vertices);
+		/// <param name="beginTiles">Référence des index de chaque tuile /// Reference of indexes of each tile</param>
+		/// <param name="vertices">Références de tous les sommets /// References of all vertexes</param>
+		Tile(std::vector<std::size_t>& beginTiles, std::vector<sf::Vertex>& vertices);
 
 		/// <summary>
 		/// Constructeur d'une tuile mettant le ratio de la texture par rapport à la texture à l'échelle demandée ///

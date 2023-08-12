@@ -4,6 +4,7 @@
 #define LOADEXCEPTION_H
 
 #include <string>
+#include <string_view>
 #include "OptTile.h"
 
 namespace opt 
