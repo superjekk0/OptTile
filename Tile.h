@@ -1,4 +1,13 @@
-﻿#pragma once
+﻿///
+/// Version de la bibliothèque datant de 2023 - Library writen in 2023
+/// 
+/// ========================================================================================
+/// ========================================================================================
+/// 
+///	Fait par Charles Mandziuk. Aucune mention n'est nécessaire, mais est toujours appréciée
+/// 
+/// Writen by Charles Mandziuk. No any mention is mendatory, but is always appreciated
+///
 
 #ifndef TILE_H
 #define TILE_H
