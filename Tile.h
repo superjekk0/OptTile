@@ -25,7 +25,7 @@
 
 namespace opt
 {
-	class OPTTILE_API Level;
+	//class OPTTILE_API Level;
 
 	enum class OPTTILE_API TextureRule {
 		// La texture sera répétée dans la tuile. Augmenter l'échelle augmentera simplement la taille de la tuile, sans augmenter la taille des textures
@@ -54,9 +54,7 @@ namespace opt
 	/// </summary>
 	class OPTTILE_API Tile {
 	private:
-		// TODO : Changer la structure pour que la tuile puisse modifier le vector de sommet ainsi que le vector indiquant le début de chaque objet
-
-		friend Level;
+		//friend Level;
 
 		/// <summary>
 		/// Regarde le nouveau nombre de sommets pour la tuile et bouge dans le vector les sommets au besoin ///
@@ -186,7 +184,6 @@ namespace opt
 		/// </summary>
 		sf::Vector2f getPosition() const;
 
-	private:
 		/// <summary>
 		/// Met la tuile au zoom spécifié selon la règle de texture (consulter la documentation pour plus de détails) ///
 		/// Puts the tile at the specified zoom according to the texture rule (consult documentation for more details)
@@ -279,7 +276,6 @@ namespace opt
 		/// </summary>
 		/// <param name="textureRule">Nouvelle règle de texture /// New texture rule</param>
 		void setTextureRule(TextureRule textureRule);
-	public:
 
 		/// <summary>
 		/// Obtient la règle de texture de la tuile ///
