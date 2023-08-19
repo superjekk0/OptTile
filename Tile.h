@@ -54,8 +54,6 @@ namespace opt
 	/// </summary>
 	class OPTTILE_API Tile {
 	private:
-		//friend Level;
-
 		/// <summary>
 		/// Regarde le nouveau nombre de sommets pour la tuile et bouge dans le vector les sommets au besoin ///
 		/// Looks the new vertexes number for the tile and moves vertexes inside the vector if needed
@@ -63,15 +61,9 @@ namespace opt
 		/// <param name="nbVertexes">Nombre de sommets dans la tuile /// Number of vertexes inside Tile</param>
 		void moveVertexes(int nbVertexes);
 	protected:
-		// La texture héritée de la classe contenant la tuile ///
-		// The inherited texture from the class containing the object
-		//std::shared_ptr<const sf::Texture> m_texture;		
-		// Donne la position de la case au coin supérieur gauche ///
-		// Gives the position at the top-left corner of the tile
-		sf::Vector2f m_position;							
-		// Donne la taille de la case ///
-		// Gives the tile's size
-		sf::Vector2f m_tileSize;											
+		// Donne le rectangle de taille et de position de la tuile ///
+		// Give the tile's rectangle for its size and its position											
+		sf::FloatRect m_tileRect;
 		// L'ensemble des points du niveau ///
 		// Entirety of vertexes creating the Level
 		std::shared_ptr<std::vector<sf::Vertex>> m_vertexes;
