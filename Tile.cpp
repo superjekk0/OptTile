@@ -37,8 +37,8 @@ void opt::Tile::intializeVertexes()
 		(*m_vertexes)[m_beginTiles->at(m_tileIndex)].position = m_position;
 		(*m_vertexes)[m_beginTiles->at(m_tileIndex) + 1].position = m_position + sf::Vector2f(0.f, m_tileSize.y);
 		(*m_vertexes)[m_beginTiles->at(m_tileIndex) + 2].position = m_position + sf::Vector2f(m_tileSize.x, 0.f);
-		(*m_vertexes)[m_beginTiles->at(m_tileIndex) + 3].position = (*m_vertexes)[1].position;
-		(*m_vertexes)[m_beginTiles->at(m_tileIndex) + 4].position = (*m_vertexes)[2].position;
+		(*m_vertexes)[m_beginTiles->at(m_tileIndex) + 3].position = (*m_vertexes)[m_beginTiles->at(m_tileIndex) + 1].position;
+		(*m_vertexes)[m_beginTiles->at(m_tileIndex) + 4].position = (*m_vertexes)[m_beginTiles->at(m_tileIndex) + 2].position;
 		(*m_vertexes)[m_beginTiles->at(m_tileIndex) + 5].position = m_position + m_tileSize;
 		for (int i{ 0 }; i < m_tileVertexesCount; ++i)
 			(*m_vertexes)[i + m_beginTiles->at(m_tileIndex)].color = m_colour;
@@ -354,9 +354,18 @@ void opt::Tile::changeTextureRect(int numberSubTexture)
 {
 	if (numberSubTexture >= 0 && numberSubTexture < m_subTextures->size())
 	{
+		if (m_subTextures->at(m_subTextureIndex).getSize() == m_subTextures->at(numberSubTexture).getSize())
+		{
+			sf::Vector2f deplacement{ m_subTextures->at(numberSubTexture).getPosition() - m_subTextures->at(m_subTextureIndex).getPosition()};
+			for (int i{ 0 }; i < m_tileVertexesCount; ++i)
+				(*m_vertexes)[i + m_beginTiles->at(m_tileIndex)].texCoords += deplacement;
+		}
+		else
+		{
+			intializeVertexes();
+		}
 		m_subTextureIndex = numberSubTexture;
 		//m_texturePosition = sf::Vector2f(m_textureSize.x / *m_textureCount * m_subTextureIndex, 0.f);
-		intializeVertexes();
 	}
 }
 
