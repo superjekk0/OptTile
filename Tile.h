@@ -1,12 +1,12 @@
 ﻿///
-/// Version de la bibliothèque datant de 2023 - Library writen in 2023
+/// Version de la bibliothèque datant de 2023 - Library written in 2023
 /// 
 /// ========================================================================================
 /// ========================================================================================
 /// 
 ///	Fait par Charles Mandziuk. Aucune mention n'est nécessaire, mais est toujours appréciée
 /// 
-/// Writen by Charles Mandziuk. No any mention is mendatory, but is always appreciated
+/// Written by Charles Mandziuk. No any mention is mandatory, but is always appreciated
 ///
 
 #ifndef TILE_H
@@ -90,7 +90,10 @@ namespace opt
 		std::shared_ptr<const std::vector<sf::FloatRect>> m_subTextures;
 		// Indique la couleur appliquée aux sommets ///
 		// Indicates the vertexes colour
-		sf::Color m_colour;													
+		sf::Color m_colour;
+		// Indique l'échelle de position par rapport au coin supérieur gauche de la tuile ///
+		// Indicates the position scale center from in the tile
+		sf::Vector2f m_centerPositionScale{0.f, 0.f};
 
 		void intializeVertexes();
 	public:
@@ -113,11 +116,8 @@ namespace opt
 		/// Constructeur d'une tuile mettant le ratio de la texture par rapport à la texture à l'échelle demandée ///
 		/// Constructor intializing the zoom from the scale asked
 		/// </summary>
-		/// <param name="texture">Reference of the utilised texture (most likely coming from the level)</param>
 		/// <param name="noTuileDebutTexture">Numéro de sous-texture utilisé /// Number of the used texture</param>
-		/// <param name="desiredSize">Taille de la tuile /// Tile size</param>
-		/// <param name="position">Position au coin supérieur gauche /// Position at top left corner</param>
-		/// <param name="subTextureCount">Nombre de sous-textures /// Number of subtextures</param>
+		/// <param name="tileRect">Rectangle de la tuile /// Tile rectangle</param>
 		/// <param name="textureRule">Règle appliquée à la sous-texture /// Rule applied to the subtexture</param>
 		/// <param name="scale">Zoom appliqué à la texture /// Zoom applied to the texture</param>
 		/// <param name="subTextures">Positions et tailles des sous-textures /// Positions and sizes of the subtextures</param>
@@ -378,6 +378,10 @@ namespace opt
 		/// </summary>
 		std::size_t vertexCount() const;
 
+		/// \brief Change le centre utilisé pour la méthode getPosition. Par exemple, mettre (0.f, 0.f) revient à mettre au coin supérieur gauche
+		/// \param scaleX Proportion par rapport à la largeur
+		/// \param scaleY Proportion par rapport à la hauteur
+		void changePositionCenter(float scaleX, float scaleY);
 	};
 }
 #endif 

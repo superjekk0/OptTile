@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Tile.h"
-#include "Tile.h"
 
 void opt::Tile::moveVertexes(int nbVertexes)
 {
@@ -39,7 +38,7 @@ void opt::Tile::intializeVertexes()
 		(*m_vertexes)[m_beginTiles->at(m_tileIndex) + 3].position = (*m_vertexes)[m_beginTiles->at(m_tileIndex) + 1].position;
 		(*m_vertexes)[m_beginTiles->at(m_tileIndex) + 4].position = (*m_vertexes)[m_beginTiles->at(m_tileIndex) + 2].position;
 		(*m_vertexes)[m_beginTiles->at(m_tileIndex) + 5].position = position + m_tileRect.getSize();
-		for (int i{ 0 }; i < m_tileVertexesCount; ++i)
+		for (unsigned long long i{ 0 }; i < m_tileVertexesCount; ++i)
 			(*m_vertexes)[i + m_beginTiles->at(m_tileIndex)].color = m_colour;
 		return;
 	}
@@ -55,7 +54,7 @@ void opt::Tile::intializeVertexes()
 		m_scale.y = m_tileRect.height / textureSize.y;
 	}
 
-	int nbVertexes{ static_cast<int>(std::ceil(m_tileRect.width / (m_subTextures->at(m_subTextureIndex).width * m_scale.x))
+	const int nbVertexes{ static_cast<int>(std::ceil(m_tileRect.width / (m_subTextures->at(m_subTextureIndex).width * m_scale.x))
 		* std::ceil(m_tileRect.height / (m_subTextures->at(m_subTextureIndex).height * m_scale.y))
 		* 6) }; // Pourquoi on multiplie par 6? Car il faut 6 sommets pour faire un carré de tuile
 	moveVertexes(nbVertexes);
@@ -101,7 +100,7 @@ void opt::Tile::intializeVertexes()
 		coinGaucheSommet.y += textureSize.y * m_scale.y;
 	}
 
-	for (int i{ 0 }; i < m_tileVertexesCount; ++i)
+	for (unsigned long long i{ 0 }; i < m_tileVertexesCount; ++i)
 	{
 		m_vertexes->at(m_beginTiles->at(m_tileIndex) + i).position += m_tileRect.getPosition();
 		m_vertexes->at(m_beginTiles->at(m_tileIndex) + i).color = m_colour;
@@ -173,7 +172,10 @@ sf::Vector2f opt::Tile::bottomRightCorner() const
 
 sf::Vector2f opt::Tile::getPosition() const
 {
-	return topLeftCorner();
+	sf::Vector2f position {m_tileRect.getPosition()};
+	position.x *= m_centerPositionScale.x;
+	position.y *= m_centerPositionScale.y;
+	return position;
 }
 
 void opt::Tile::setScale(const sf::Vector2f& scale)
@@ -483,4 +485,9 @@ int opt::Tile::subTextureIndex() const
 std::size_t opt::Tile::vertexCount() const
 {
 	return m_tileVertexesCount;
+}
+
+void opt::Tile::changePositionCenter(float scaleX, float scaleY)
+{
+	m_centerPositionScale = sf::Vector2f(scaleX, scaleY);
 }

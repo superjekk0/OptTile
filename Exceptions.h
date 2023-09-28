@@ -1,12 +1,12 @@
 ///
-/// Version de la bibliothèque datant de 2023 - Library writen in 2023
+/// Version de la bibliothèque datant de 2023 - Library written in 2023
 /// 
 /// ========================================================================================
 /// ========================================================================================
 /// 
 ///	Fait par Charles Mandziuk. Aucune mention n'est nécessaire, mais est toujours appréciée
 /// 
-/// Writen by Charles Mandziuk. No any mention is mendatory, but is always appreciated
+/// Written by Charles Mandziuk. No any mention is mandatory, but is always appreciated
 ///
 
 #ifndef LOADEXCEPTION_H
@@ -30,7 +30,6 @@ namespace opt
 
 		const std::string_view showMessage() const;
 
-		virtual ~Exception() = 0;
 	};
 
 	class OPTTILE_API LoadException : Exception
