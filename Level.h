@@ -16,6 +16,8 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <SFML/Window.hpp>
+#include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 #include "Tile.h"
 
@@ -303,7 +305,8 @@ namespace opt
 		/// </summary>
 		/// <param name="path">Chemin de la texture /// Texture's path</param>
 		/// <param name="subTextureCount">Nombre de sous-textures dans la texture /// Number of subtextures inside the texture</param>
-		void loadTexture(const std::string& path, int subTextureCount);
+		/// <returns>Si faux, la texture n'est pas mise à jour /// If false, the texture is not updated</returns>
+		bool loadTexture(const std::string& path, int subTextureCount);
 
 		/// <summary>
 		/// Recharge la texture globale au chemin indiqué, redéfinit les rectangles de sous-textures ///
@@ -311,7 +314,8 @@ namespace opt
 		/// </summary>
 		/// <param name="path">Chemin de la texture /// Texture path</param>
 		/// <param name="subTextures">Rectangles de sous-textures /// Subtexture rectangles</param>
-		void loadTexture(const std::string& path, std::vector<sf::FloatRect>& subTextures);
+		/// <returns>Si faux, la texture n'est pas mise à jour /// If false, the texture is not updated</returns>
+		bool loadTexture(const std::string& path, std::vector<sf::FloatRect>& subTextures);
 
 		/// <summary>
 		/// Recharge la texture globale au chemin indiqué ainsi que les sous-textures au chemin indiqué ///
@@ -319,7 +323,8 @@ namespace opt
 		/// </summary>
 		/// <param name="path">Chemin de texture /// Texture path</param>
 		/// <param name="subTexturePath">Chemin de la sous-texture. Le formattage est ainsi : "left,top,width,height" /// Subtexture path. The subtexture rectangle must be formatted this way: "left,top,width,height"</param>
-		void loadTexture(const std::string& path, const std::string& subTexturePath);
+		/// <returns>Si faux, la texture n'est pas mise à jour /// If false, the texture is not updated</returns>
+		bool loadTexture(const std::string& path, const std::string& subTexturePath);
 
 		/// <summary>
 		/// Recharge la texture gloable à la texture indiquée et redéfinis le nombre de sous-textures en rectangles égaux ///

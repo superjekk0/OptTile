@@ -187,10 +187,10 @@ void opt::Level::resize(const sf::Vector2f& size, TextureRule textureRule, std::
 	if (m_autoUpdate) reloadBuffer();
 }
 
-void opt::Level::loadTexture(const std::string& path, int subTextureCount)
+bool opt::Level::loadTexture(const std::string& path, int subTextureCount)
 {
 	if (!m_texture.loadFromFile(path))
-		throw opt::LoadException(path);
+		return false;
 	//m_nbTexture = subTextureCount;
 	m_subTextures.resize(subTextureCount);
 	for (int i{ 0 }; i < m_subTextures.size(); ++i)
@@ -206,12 +206,13 @@ void opt::Level::loadTexture(const std::string& path, int subTextureCount)
 		tuile->reloadTexture();
 	}
 	if (m_autoUpdate) reloadBuffer();
+	return true;
 }
 
-void opt::Level::loadTexture(const std::string& path, std::vector<sf::FloatRect>& subTextures)
+bool opt::Level::loadTexture(const std::string& path, std::vector<sf::FloatRect>& subTextures)
 {
 	if (!m_texture.loadFromFile(path))
-		throw opt::LoadException(path);
+		return false;
 	//m_nbTexture = subTextures.size();
 	/*m_subTextures.resize(subTextureCount);
 	for (int i{ 0 }; i < m_subTextures.size(); ++i)
@@ -228,12 +229,13 @@ void opt::Level::loadTexture(const std::string& path, std::vector<sf::FloatRect>
 		tuile->reloadTexture();
 	}
 	if (m_autoUpdate) reloadBuffer();
+	return true;
 }
 
-void opt::Level::loadTexture(const std::string& path, const std::string& subTexturePath)
+bool opt::Level::loadTexture(const std::string& path, const std::string& subTexturePath)
 {
 	if (!m_texture.loadFromFile(path))
-		throw opt::LoadException(path);
+		return false;
 	std::fstream fichier{subTexturePath};
 	std::vector<std::string> lignes;
 	for (int i{ 0 }; fichier; ++i)
@@ -259,6 +261,7 @@ void opt::Level::loadTexture(const std::string& path, const std::string& subText
 		tuile->reloadTexture();
 	}
 	if (m_autoUpdate) reloadBuffer();
+	return true;
 }
 
 void opt::Level::loadTexture(const sf::Texture& texture, int subTextureCount)

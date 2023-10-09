@@ -173,8 +173,9 @@ sf::Vector2f opt::Tile::bottomRightCorner() const
 sf::Vector2f opt::Tile::getPosition() const
 {
 	sf::Vector2f position {m_tileRect.getPosition()};
-	position.x *= m_centerPositionScale.x;
-	position.y *= m_centerPositionScale.y;
+
+	position.x += m_tileRect.width * m_centerPositionScale.x;
+	position.y *= m_tileRect.height * m_centerPositionScale.y;
 	return position;
 }
 
