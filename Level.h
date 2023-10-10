@@ -332,7 +332,8 @@ namespace opt
 		/// </summary>
 		/// <param name="texture">Nouvelle texture globale /// New global texture</param>
 		/// <param name="subTextureCount">Nombre de sous-textures dans la nouvelle texture globale /// Number of subtextures inside the new global texture</param>
-		void loadTexture(const sf::Texture& texture, int subTextureCount);
+		/// <returns>Si faux, la texture n'est pas mise à jour /// If false, the texture is not updated</returns>
+		bool loadTexture(const sf::Texture& texture, int subTextureCount);
 
 		/// <summary>
 		/// Recharge la texture globale à la texture indiquée, redéfinis le nombre de sous-textures et les rectangles de sous-textures ///
@@ -348,7 +349,7 @@ namespace opt
 		/// </summary>
 		/// <param name="texture">Référence de texture utilisée /// Texture reference used to copy</param>
 		/// <param name="subTexturePath">Chemin du fichier de sous-textures. Le formattage doit se faire ainsi: "left,top,width,height" /// Subtexture file path. The file must be formatted that way: "left,top,width,height"</param>
-		void loadTexture(const sf::Texture& texture, const std::string& subTexturePath);
+		bool loadTexture(const sf::Texture& texture, const std::string& subTexturePath);
 
 		/// <summary>
 		/// Change le facteur d'agrandissement de la tuile indiquée en paramètre ///
@@ -424,7 +425,8 @@ namespace opt
 		/// <param name="position">Position du nouvel objet Tile /// Position of the new tile</param>
 		/// <param name="numberSubTexture">Nombre de sous-textures /// Number of subtexture</param>
 		/// <param name="textureRule">Règle de texture appliquée à l'objet Tile. Vérifier la documentation pour plus de détails /// Texture rule applied to the tile. Check documentation for more details</param>
-		void add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule);
+		/// <param name="scale">Zoom appliqué à la texture /// Zoom applied to the texture</param>
+		void add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule, sf::Vector2f scale = sf::Vector2f(1.f, 1.f));
 
 		/// <summary>
 		/// Construit un nouvel objet Tile et le rajoute au vector de Tile ///
@@ -435,7 +437,7 @@ namespace opt
 		/// <param name="numberSubTexture">Numéro de sous-texture /// Number of subtexture</param>
 		/// <param name="textureRule">Règle de texture appliquée à l'objet. Vérifier la documentation pour plus d'informations /// Texture rule applied to the tile. Check documentation for more details</param>
 		/// <param name="scale">Zoom appliqué à la texture /// Zoom applied to the texture</param>
-		void add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule, const sf::Vector2f& scale);
+		//void add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule, const sf::Vector2f& scale);
 
 		/// <summary>
 		/// Retourne un pointeur d'un type dérivé ///
