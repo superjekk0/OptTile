@@ -23,6 +23,11 @@
 #include <cmath>
 #include <memory>
 
+//namespace TestsOptTile
+//{
+//	class TestsOptTile;
+//}
+
 namespace opt
 {
 	//class OPTTILE_API Level;
@@ -60,6 +65,10 @@ namespace opt
 		/// </summary>
 		/// <param name="nbVertexes">Nombre de sommets dans la tuile /// Number of vertexes inside Tile</param>
 		void moveVertexes(int nbVertexes);
+
+		// À enlever une fois les tests terminés
+		//friend class TestsOptTile::TestsOptTile;
+
 	protected:
 		// Donne le rectangle de taille et de position de la tuile ///
 		// Give the tile's rectangle for its size and its position											

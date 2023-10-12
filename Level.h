@@ -21,6 +21,11 @@
 #include <SFML/Graphics.hpp>
 #include "Tile.h"
 
+namespace TestsOptTile
+{
+	class TestsOptTile;
+}
+
 namespace opt
 {
 	/// <summary>
@@ -426,18 +431,21 @@ namespace opt
 		/// <param name="numberSubTexture">Nombre de sous-textures /// Number of subtexture</param>
 		/// <param name="textureRule">Règle de texture appliquée à l'objet Tile. Vérifier la documentation pour plus de détails /// Texture rule applied to the tile. Check documentation for more details</param>
 		/// <param name="scale">Zoom appliqué à la texture /// Zoom applied to the texture</param>
-		void add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule, sf::Vector2f scale = sf::Vector2f(1.f, 1.f));
+		void add(const sf::FloatRect& tileRect, int numberSubTexture, TextureRule textureRule, sf::Vector2f scale = sf::Vector2f(1.f, 1.f));
 
 		/// <summary>
-		/// Construit un nouvel objet Tile et le rajoute au vector de Tile ///
-		/// Constructs and add a new tile inside the tiles' vector
+		/// Permet de rajouter des objets dérivés de Tile sans avoir à donner toutes les données. ATTENTION!!! L'ordre des paramètres doit être le même que dans la classe opt::Tile, sous peine d'avoir des erreurs de compilation ///
+		/// Allows to add derived objects from Tile without having to give all the data. WARNING!!! The order of the parameters must be the same as in the class opt::Tile, otherwise it will cause compilation errors
 		/// </summary>
-		/// <param name="size">Taille du nouvel objet Tile /// Size of the new tile</param>
-		/// <param name="position">Position du nouvel objet Tile /// Position of the new tile</param>
-		/// <param name="numberSubTexture">Numéro de sous-texture /// Number of subtexture</param>
-		/// <param name="textureRule">Règle de texture appliquée à l'objet. Vérifier la documentation pour plus d'informations /// Texture rule applied to the tile. Check documentation for more details</param>
+		/// <typeparam name="T">Type de la classe dérivée /// Type of the derived class</typeparam>
+		/// <typeparam name="...Args">Types des arguments à rajouter /// Types of arguments to add</typeparam>
+		/// <param name="tileRect">Rectangle de la tuile /// Rectangle for the Tile</param>
+		/// <param name="numberSubTexture">Numéro de sous-texture /// Index of the sub-texture</param>
+		/// <param name="textureRule">Règle appliquée à la texture /// Rule applied to the the texture</param>
+		/// <param name="...args">Arguments à rajouter à l'objet dérivé /// Arguments to add to the derived object</param>
 		/// <param name="scale">Zoom appliqué à la texture /// Zoom applied to the texture</param>
-		//void add(const sf::Vector2f& size, const sf::Vector2f& position, int numberSubTexture, TextureRule textureRule, const sf::Vector2f& scale);
+		template <typename T, typename... Args>
+		void add(const sf::FloatRect& tileRect, int numberSubTexture, TextureRule textureRule, Args&&... args, sf::Vector2f scale = sf::Vector2f(1.f, 1.f));
 
 		/// <summary>
 		/// Retourne un pointeur d'un type dérivé ///
@@ -529,6 +537,13 @@ namespace opt
 		/// <param name="autoUpdate">Doit être mis à jour à chaque changement /// Must update at each change</param>
 		void bufferAutoUpdate(bool autoUpdate);
 	};
+
+	template<typename T, typename ...Args>
+	inline void Level::add(const sf::FloatRect& tileRect, int numberSubTexture, TextureRule textureRule, Args && ...args, sf::Vector2f scale)
+	{
+		m_tiles.push_back(std::make_unique<T>(numberSubTexture, tileRect,
+			textureRule, m_subTextures, m_beginTileIndex, m_vertexes, scale, std::forward<Args>(args)...));
+	}
 
 	template <class T>
 	inline T* const opt::Level::derivedPointer(int index)
