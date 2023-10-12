@@ -35,7 +35,7 @@ namespace opt
 	enum class OPTTILE_API TextureRule {
 		// La texture sera répétée dans la tuile. Augmenter l'échelle augmentera simplement la taille de la tuile, sans augmenter la taille des textures
 		// The texture is repeated inside the tile. Increasing the scale only increased the size of the tile, without inflating the texture zoom
-		repeat_texture,	
+		repeat_texture,
 		// La texture sera transformée en mettant la hauteur en priorité. Ex: l'échelle de la tuile au début est de 1:1, puis devient 2:1, ça va être 1:1, puisque la hauteur a priorité. Le rectangle de texture n'est pas affecté (si une texture se répétait 2 fois, elle restera répétée 2 fois)
 		// The texture is transformed by taking first the height. Eg: a tile begins with the scale 1:1 (100x100), then becomes 2:1, it will be 1:1, because height has the priority. The texture rectangle is not affected (if a texture is repeated twice, it will stay repeated twice)
 		keep_height,
@@ -93,7 +93,7 @@ namespace opt
 		sf::Vector2f m_scale{ 1.f, 1.f };									
 		// Indique le numéro de sous-texture (utile lorsque la texture est changée) ///
 		// Indicates the subtexture number (usefull when texture is changed)
-		int m_subTextureIndex;												
+		std::size_t m_subTextureIndex;												
 		// Indique les rectangles de sous-textures (peuvent être asymétriques ///
 		// Indicates subtexture's rectangles (they may be asymetrical)
 		std::shared_ptr<const std::vector<sf::FloatRect>> m_subTextures;
@@ -130,7 +130,7 @@ namespace opt
 		/// <param name="textureRule">Règle appliquée à la sous-texture /// Rule applied to the subtexture</param>
 		/// <param name="scale">Zoom appliqué à la texture /// Zoom applied to the texture</param>
 		/// <param name="subTextures">Positions et tailles des sous-textures /// Positions and sizes of the subtextures</param>
-		Tile(int noTuileDebutTexture, const sf::FloatRect& tileRect, TextureRule textureRule, const std::vector<sf::FloatRect>& subTextures,
+		Tile(std::size_t noTuileDebutTexture, const sf::FloatRect& tileRect, TextureRule textureRule, const std::vector<sf::FloatRect>& subTextures,
 			std::vector<std::size_t>& beginTiles, std::vector<sf::Vertex>& vertices, sf::Vector2f scale = sf::Vector2f(1.f, 1.f));
 
 		/// <summary>
@@ -269,7 +269,7 @@ namespace opt
 		/// Changes tile's subtexture
 		/// </summary>
 		/// <param name="numberSubTexture">Index de la sous-texture /// Index of the subtexture</param>
-		void changeTextureRect(int numberSubTexture);
+		void changeTextureRect(std::size_t numberSubTexture);
 
 		/// <summary>
 		/// Change la règle de texture ///
@@ -379,7 +379,7 @@ namespace opt
 		/// Retourne l'index de la sous-texture utilisée par la tuile ///
 		/// Returns the index used for subtexture by the tile
 		/// </summary>
-		int subTextureIndex() const;
+		std::size_t subTextureIndex() const;
 
 		/// <summary>
 		/// Retoune le nombre de sommets composant la tuile ///

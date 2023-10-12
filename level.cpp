@@ -331,9 +331,9 @@ void opt::Level::add(const opt::Tile& tile)
 	reloadBuffer();
 }
 
-void opt::Level::add(const sf::FloatRect& tileRect, int numberSubTexture, TextureRule textureRule, sf::Vector2f scale)
+void opt::Level::add(const sf::FloatRect& tileRect, std::size_t numberSubTexture, TextureRule textureRule, sf::Vector2f scale)
 {
-	m_tiles.push_back(std::make_unique<opt::Tile>(numberSubTexture, tileRect,
+	m_tiles.push_back(std::make_unique<opt::Tile>(static_cast<std::size_t>(numberSubTexture), tileRect,
 		textureRule, m_subTextures, m_beginTileIndex, m_vertexes, scale));
 	reloadBuffer();
 }
