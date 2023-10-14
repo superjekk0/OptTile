@@ -286,8 +286,8 @@ namespace opt
 		void resize(const sf::Vector2f& size, std::size_t index);
 
 		/// <summary>
-		/// Permet de redimensionner la tuile, de changer la règle de texture et met à jour les sommets pour faire le rendu /// 
-		/// Resizes the tile, changes the texture rule, then updates vertexes for rendering
+		/// Change la règle de texture, puis permet redimensionne la tuile si possible et met à jour les sommets pour faire le rendu ///
+		/// Changes the texture rule, then resizes the tile if possible and updates vertexes for rendering
 		/// </summary>
 		/// <param name="x">Nouvelle taille horizontale /// New horizontal size</param>
 		/// <param name="y">Nouvelle taille verticale /// New vertical size</param>
@@ -296,8 +296,8 @@ namespace opt
 		void resize(float x, float y, TextureRule textureRule, std::size_t index);
 
 		/// <summary>
-		/// Permet de redimensionner la tuile, de changer la règle de texture et met à jour les sommets pour faire le rendu ///
-		/// Resizes the tile, changes the texture rule, then updates vertexes for rendering
+		/// Change la règle de texture, puis permet redimensionne la tuile si possible et met à jour les sommets pour faire le rendu ///
+		/// Changes the texture rule, then resizes the tile if possible and updates vertexes for rendering
 		/// </summary>
 		/// <param name="size">Nouvelle taille /// New size</param>
 		/// <param name="textureRule">Nouvelle règle de texture de la tuile /// New tile's texture rule</param>

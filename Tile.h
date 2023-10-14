@@ -23,10 +23,10 @@
 #include <cmath>
 #include <memory>
 
-//namespace TestsOptTile
-//{
-//	class TestsOptTile;
-//}
+namespace TestsOptTile
+{
+	class TestsOptTile;
+}
 
 namespace opt
 {
@@ -38,10 +38,10 @@ namespace opt
 		repeat_texture,
 		// La texture sera transformée en mettant la hauteur en priorité. Ex: l'échelle de la tuile au début est de 1:1, puis devient 2:1, ça va être 1:1, puisque la hauteur a priorité. Le rectangle de texture n'est pas affecté (si une texture se répétait 2 fois, elle restera répétée 2 fois)
 		// The texture is transformed by taking first the height. Eg: a tile begins with the scale 1:1 (100x100), then becomes 2:1, it will be 1:1, because height has the priority. The texture rectangle is not affected (if a texture is repeated twice, it will stay repeated twice)
-		keep_height,
+		height_first,
 		// La texture sera transformée en mettant la largeur en priorité. Ex: l'échelle de la tuile au début est de 1:1 (100x100), puis devient 2:1. La tuile aura l'échelle 2:2 (200x200), puisque la largeur a priorité. Le rectangle de texture n'est pas affecté (si une texture se répète 2 fois, elle restera répétée 2 fois)
 		// The texture is transformed by taking first the width. Eg: a tile begins with the scale 1:1 (100x100), then becomes 2:1. The tile will have the scale 2:2 (200x200), as width has the priority. The texture rectangle is not affected (if a texture is repeated twice, it will stay repeated twice)
-		keep_width,	
+		width_first,	
 		// La texture sera plus grosse, mais l'objet gardera la même taille
 		// The texture will be more zoomed, but the object will keep the same size
 		keep_size,			
@@ -67,7 +67,7 @@ namespace opt
 		void moveVertexes(int nbVertexes);
 
 		// À enlever une fois les tests terminés
-		//friend class TestsOptTile::TestsOptTile;
+		friend class TestsOptTile::TestsOptTile;
 
 	protected:
 		// Donne le rectangle de taille et de position de la tuile ///

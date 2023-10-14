@@ -188,13 +188,13 @@ void opt::Tile::setScale(const sf::Vector2f& scale)
 		m_tileRect.width *= scale.x;
 		m_tileRect.height *= scale.y;
 		break;
-	case TextureRule::keep_height:
+	case TextureRule::height_first:
 		m_scale.x *= scale.y;
 		m_scale.y *= scale.y;
 		m_tileRect.width *= scale.y;
 		m_tileRect.height *= scale.y;
 		break;
-	case TextureRule::keep_width:
+	case TextureRule::width_first:
 		m_scale.x *= scale.x;
 		m_scale.y *= scale.x;
 		m_tileRect.width *= scale.x;
@@ -218,8 +218,8 @@ void opt::Tile::setScale(float scale)
 {
 	switch (m_textureRule)
 	{
-	case TextureRule::keep_height:
-	case TextureRule::keep_width:
+	case TextureRule::height_first:
+	case TextureRule::width_first:
 	case TextureRule::adjustable_size:
 		m_tileRect.height *= scale;
 		m_tileRect.width *= scale;
@@ -252,13 +252,13 @@ void opt::Tile::setScale(float x, float y)
 		m_scale.x *= x;
 		m_scale.y *= y;
 		break;
-	case TextureRule::keep_height:
+	case TextureRule::height_first:
 		m_tileRect.width *= y;
 		m_tileRect.height *= y;
 		m_scale.x *= y;
 		m_scale.y *= y;
 		break;
-	case TextureRule::keep_width:
+	case TextureRule::width_first:
 		m_tileRect.width *= x;
 		m_tileRect.height *= x;
 		m_scale.x *= x;
@@ -301,13 +301,13 @@ void opt::Tile::resize(const sf::Vector2f& size)
 		m_tileRect.width = size.x;
 		m_tileRect.height = size.y;
 		break;
-	case TextureRule::keep_height:
+	case TextureRule::height_first:
 		scale = size.y / m_tileRect.height;
 		m_tileRect.width *= scale;
 		m_tileRect.height *= scale;
 		m_scale *= scale;
 		break;
-	case TextureRule::keep_width:
+	case TextureRule::width_first:
 		scale = size.x / m_tileRect.width;
 		m_tileRect.width *= scale;
 		m_tileRect.height *= scale;
@@ -330,13 +330,13 @@ void opt::Tile::resize(float x, float y)
 		m_tileRect.width = x;
 		m_tileRect.height = y;
 		break;
-	case TextureRule::keep_height:
+	case TextureRule::height_first:
 		scale = y / m_tileRect.height;
 		m_tileRect.width *= scale;
 		m_tileRect.height *= scale;
 		m_scale *= scale;
 		break;
-	case TextureRule::keep_width:
+	case TextureRule::width_first:
 		scale = x / m_tileRect.width;
 		m_tileRect.width *= scale;
 		m_tileRect.height *= scale;
