@@ -23,16 +23,26 @@
 #include <cmath>
 #include <memory>
 
-namespace TestsOptTile
-{
-	class TestsTile;
-	class TestsLevel;
-}
+//namespace ModTile
+//{
+//	class Position;
+//	class Zoom;
+//	class Couleur;
+//	class Taille;
+//	class Centre;
+//}
+//
+//namespace ModLevel 
+//{
+//	class AjoutTile;
+//}
 
 namespace opt
 {
-	//class OPTTILE_API Level;
-
+	/// <summary>
+	/// Sert à définir la manière dont la texture sera transformée lorsque la taille ou l'échelle de la tuile sera changée. ///
+	/// Used to define how the texture will be transformed when the tile's size or scale will be changed.
+	/// </summary>
 	enum class OPTTILE_API TextureRule {
 		// La texture sera répétée dans la tuile. Augmenter l'échelle augmentera simplement la taille de la tuile, sans augmenter la taille des textures
 		// The texture is repeated inside the tile. Increasing the scale only increased the size of the tile, without inflating the texture zoom
@@ -68,10 +78,13 @@ namespace opt
 		void moveVertexes(int nbVertexes);
 
 		// À enlever une fois les tests terminés
-		friend class TestsOptTile::TestsLevel;
-		friend class TestsOptTile::TestsTile;
+		//friend class ModTile::Centre;
+		//friend class ModTile::Couleur;
+		//friend class ModTile::Position;
+		//friend class ModTile::Taille;
+		//friend class ModTile::Zoom;
+		//friend class ModLevel::AjoutTile;
 
-	protected:
 		// Donne le rectangle de taille et de position de la tuile ///
 		// Give the tile's rectangle for its size and its position											
 		sf::FloatRect m_tileRect;
@@ -108,6 +121,7 @@ namespace opt
 		// Indique l'échelle de position par rapport au coin supérieur gauche de la tuile ///
 		// Indicates the position scale center from in the tile
 		sf::Vector2f m_centerPositionScale{0.f, 0.f};
+	protected:
 
 		void intializeVertexes();
 	public:
@@ -327,12 +341,6 @@ namespace opt
 		/// Reloads vertexes to make sure it follows a subtexture that exists. If the texture number overwhelm the maximum value, the subtexture will be the subtexture at the last index.
 		/// </summary>
 		void reloadTexture();
-
-		/// <summary>
-		/// Permet d'accéder à l'adresse de l'objet ///
-		/// Allows to get the address of the object
-		/// </summary>
-		//virtual Tile* getThis();
 
 		/// <summary>
 		/// Crée un clone de l'objet qui peut contenir des méthodes dérivées tout comme des membres dérivés. Pour clôner un objet dérivé, surcharger cette méthode ///

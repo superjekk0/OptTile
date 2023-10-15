@@ -207,7 +207,7 @@ void opt::Tile::setScale(const sf::Vector2f& scale)
 		m_tileRect.height *= scale.y;
 		break;
 	}
-	setPositionCenter(m_centerPositionScale);
+	m_position = m_tileRect.getPosition() + sf::Vector2f{ m_tileRect.width * m_centerPositionScale.x, m_tileRect.height * m_centerPositionScale.y };
 	intializeVertexes();
 }
 
@@ -231,7 +231,7 @@ void opt::Tile::setScale(float scale)
 		m_scale *= scale;
 		break;
 	}
-	setPositionCenter(m_centerPositionScale);
+	m_position = m_tileRect.getPosition() + sf::Vector2f{ m_tileRect.width * m_centerPositionScale.x, m_tileRect.height * m_centerPositionScale.y };
 	intializeVertexes();
 }
 
@@ -267,7 +267,7 @@ void opt::Tile::setScale(float x, float y)
 		m_scale.y *= y;
 		break;
 	}
-	setPositionCenter(m_centerPositionScale);
+	m_position = m_tileRect.getPosition() + sf::Vector2f{ m_tileRect.width * m_centerPositionScale.x, m_tileRect.height * m_centerPositionScale.y };
 	intializeVertexes();
 }
 
@@ -315,7 +315,7 @@ void opt::Tile::resize(const sf::Vector2f& size)
 	case TextureRule::keep_size:
 		break;
 	}
-	setPositionCenter(m_centerPositionScale);
+	m_position = m_tileRect.getPosition() + sf::Vector2f{ m_tileRect.width * m_centerPositionScale.x, m_tileRect.height * m_centerPositionScale.y };
 	intializeVertexes();
 }
 
@@ -345,7 +345,7 @@ void opt::Tile::resize(float x, float y)
 	case TextureRule::keep_size:
 		break;
 	}
-	setPositionCenter(m_centerPositionScale);
+	m_position = m_tileRect.getPosition() + sf::Vector2f{ m_tileRect.width * m_centerPositionScale.x, m_tileRect.height * m_centerPositionScale.y };
 	intializeVertexes();
 }
 
@@ -436,11 +436,6 @@ void opt::Tile::reloadTexture()
 		m_subTextureIndex = m_subTextures->size() - 1;
 	changeTextureRect(m_subTextureIndex);
 }
-
-//opt::Tile* opt::Tile::getThis()
-//{
-//	return this;
-//}
 
 std::unique_ptr<opt::Tile> opt::Tile::clone() const
 {

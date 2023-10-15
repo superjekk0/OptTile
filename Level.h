@@ -38,111 +38,6 @@ namespace opt
 	template <typename T>
 	T parse(const std::string& line);
 
-	/// <summary>
-	/// Permet de référencer un objet d'un type générique. Fonctionne même dans des vectors (normalement interdit par le compilateur) ///
-	/// Allows to reference an object of a generic type. Works even in vectors, which normally forbid reference-type
-	/// </summary>
-	/// <typeparam name="T"></typeparam>
-	template <typename T>
-	class OPTTILE_API Reference {
-	private:
-		T* m_reference;
-
-	public:
-
-		/// <summary>
-		/// Crée une référence vide ///
-		/// Creates a null reference, that needs to be initialized
-		/// </summary>
-		Reference() : m_reference{ nullptr }
-		{}
-
-		/// <summary>
-		/// Crée une référence à un objet déjà existant ///
-		/// Create a reference to an already existing object
-		/// </summary>
-		/// <param name="reference">Variable à référencer /// Variable to reference</param>
-		Reference(T& reference) : m_reference{ &reference }
-		{}
-
-		/// <summary>
-		/// Assigne la référence à l'adresse de l'autre référence ou assigne la valeur de la référence à partir de l'autre référence ///
-		/// Assigns the reference to the other's reference or assigns the other reference's value to the reference
-		/// </summary>
-		/// <param name="other">Autre référence utilisée /// Other utilised reference</param>
-		Reference& operator= (const Reference& other)
-		{
-			m_reference = other.m_reference;
-			return *this;
-		}
-
-		/// <summary>
-		/// Assigne la référence à l'adresse d'une variable référée ou assigne la valeur de la variable référée dans la référence ///
-		/// Assign the address' reference from a referenced variable or assigns its value inside the class
-		/// </summary>
-		/// <param name="reference">Variable référencée /// Referenced variable</param>
-		Reference& operator=(T& reference)
-		{
-			if (!m_reference)
-				m_reference = &reference;
-			else
-				*m_reference = reference;
-			return *this;
-		}
-
-		/// <summary>
-		/// Assigne une valeur à la référence si une adresse existe ///
-		/// Assigns a value if an address exists for the reference
-		/// </summary>
-		/// <param name="value">Valeur à assigner à la référence /// Value to assign to the reference</param>
-		Reference& operator=(const T&& value)
-		{
-			if (m_reference)
-				*m_reference = value;
-			return *this;
-		}
-
-		/// <summary>
-		/// Indique si la valeur de la référence correspond à la valeur d'une autre référence ///
-		/// Indicates if the reference's value is equal to another reference's value
-		/// </summary>
-		/// <param name="other">Autre référence /// The other reference</param>
-		bool operator==(const Reference& other)
-		{
-			return (*m_reference == *other.m_reference);
-		}
-
-		/// <summary>
-		/// Retourne une référence constante de la variable référencée ///
-		/// Returns a const reference of the referenced variable
-		/// </summary>
-		const T& get() const
-		{
-			return *m_reference;
-		}
-
-		/// <summary>
-		/// Retourne une référence de la variable référencée ///
-		/// Returns a reference of the referenced variable
-		/// </summary>
-		T& get()
-		{
-			return *m_reference;
-		}
-
-		/// <summary>
-		/// Lorsqu'une méthode ou une fonction demande un argument de type T, la référence fera la conversion automatiquement ///
-		/// When a method or a function asks for typed T argument, the reference will automatically make the conversion
-		/// </summary>
-		operator T& () const
-		{
-			if (!m_reference)
-				throw "up";
-			return *m_reference;
-		}
-
-	};
-
 	class OPTTILE_API Level : public sf::Drawable {
 	private:
 		std::vector<std::unique_ptr<Tile>> m_tiles;
@@ -455,7 +350,7 @@ namespace opt
 		/// <param name="index">Index de l'objet /// Tile index</param>
 		/// <returns>Si null, l'objet n'est pas de ce type /// If null, the object is not this type</returns>
 		template <class T>
-		T* const derivedPointer(int index);
+		T* const derivedPointer(std::size_t index);
 
 		/// <summary>
 		/// Retourne une référence constante de la texture utilisée dans le niveau ///
@@ -546,7 +441,7 @@ namespace opt
 	}
 
 	template <class T>
-	inline T* const opt::Level::derivedPointer(int index)
+	inline T* const opt::Level::derivedPointer(std::size_t index)
 	{
 		return dynamic_cast<T*>(m_tiles[index].get());
 	}
