@@ -354,21 +354,21 @@ void opt::Level::changeTextureRect(int numberTexture, int index)
 	if (m_autoUpdate) reloadBuffer();
 }
 
-void opt::Level::changeColour(const sf::Color& color, int index)
+void opt::Level::changeColor(const sf::Color& color, int index)
 {
-	m_tiles[index]->changeColour(color);
+	m_tiles[index]->changeColor(color);
 	if (m_autoUpdate) reloadBuffer();
 }
 
-void opt::Level::resetColour(int index)
+void opt::Level::resetColor(int index)
 {
-	m_tiles[index]->resetColour();
+	m_tiles[index]->resetColor();
 	if (m_autoUpdate) reloadBuffer();
 }
 
-sf::Color opt::Level::getColour(int index) const
+sf::Color opt::Level::getColor(int index) const
 {
-	return m_tiles[index]->getColour();
+	return m_tiles[index]->getColor();
 }
 
 sf::FloatRect opt::Level::getSubTexture(int index) const

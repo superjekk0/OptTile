@@ -25,7 +25,8 @@
 
 namespace TestsOptTile
 {
-	class TestsOptTile;
+	class TestsTile;
+	class TestsLevel;
 }
 
 namespace opt
@@ -67,12 +68,16 @@ namespace opt
 		void moveVertexes(int nbVertexes);
 
 		// À enlever une fois les tests terminés
-		friend class TestsOptTile::TestsOptTile;
+		friend class TestsOptTile::TestsLevel;
+		friend class TestsOptTile::TestsTile;
 
 	protected:
 		// Donne le rectangle de taille et de position de la tuile ///
 		// Give the tile's rectangle for its size and its position											
 		sf::FloatRect m_tileRect;
+		// Donne la position au niveau du centre de la tuile ///
+		// Give the position at the center of the tile
+		sf::Vector2f m_position;
 		// L'ensemble des points du niveau ///
 		// Entirety of vertexes creating the Level
 		std::shared_ptr<std::vector<sf::Vertex>> m_vertexes;
@@ -94,7 +99,7 @@ namespace opt
 		// Indique le numéro de sous-texture (utile lorsque la texture est changée) ///
 		// Indicates the subtexture number (usefull when texture is changed)
 		std::size_t m_subTextureIndex;												
-		// Indique les rectangles de sous-textures (peuvent être asymétriques ///
+		// Indique les rectangles de sous-textures (peuvent être asymétriques) ///
 		// Indicates subtexture's rectangles (they may be asymetrical)
 		std::shared_ptr<const std::vector<sf::FloatRect>> m_subTextures;
 		// Indique la couleur appliquée aux sommets ///
@@ -114,8 +119,8 @@ namespace opt
 		Tile();
 
 		/// <summary>
-		/// Constructeur n'apportant que le minimum pour fonctionner, soit les références à absolument avoir ///
-		/// Constructor bringing only the minimum to make the Tile work, which are the absolutely necessary references to have
+		/// Constructeur d'une tuile ne demandant que le minimum, soit les références pour manipuler les collections. Ce constructeur est utile pour les tuiles qui n'ont pas à afficher de texture, mais seulement une couleur ///
+		/// Constructor initializing the minimum, which are the references to manipulate the collections. This constructor is usefull for tiles that don't have to display a texture, but only a color
 		/// </summary>
 		/// <param name="beginTiles">Référence des index de chaque tuile /// Reference of indexes of each tile</param>
 		/// <param name="vertices">Références de tous les sommets /// References of all vertexes</param>
@@ -146,12 +151,14 @@ namespace opt
 		std::vector<sf::Vertex>& vertexes();
 
 		/// <summary>
-		/// Retourne la hauteur de la tuile /// Returns the tile's height
+		/// Retourne la hauteur de la tuile ///
+		/// Returns the tile's height
 		/// </summary>
 		float height() const;
 
 		/// <summary>
-		/// Retourne la largeur de la tuile /// Returns the tile's width
+		/// Retourne la largeur de la tuile ///
+		/// Returns the tile's width
 		/// </summary>
 		float width() const;
 
@@ -269,7 +276,8 @@ namespace opt
 		/// Changes tile's subtexture
 		/// </summary>
 		/// <param name="numberSubTexture">Index de la sous-texture /// Index of the subtexture</param>
-		void changeTextureRect(std::size_t numberSubTexture);
+		/// <returns>Retourne true si l'index de sous-texture est valide, false sinon /// Returns true if the index is valid, false otherwise</returns>
+		bool changeTextureRect(std::size_t subTextureIndex);
 
 		/// <summary>
 		/// Change la règle de texture ///
@@ -300,15 +308,15 @@ namespace opt
 		void move(float offsetX, float offsetY);
 
 		/// <summary>
-		/// Met le coin supérieur gauche à la position entrée en paramètre ///
-		/// Puts the top left corner at the position entered in parameter
+		/// Met le centre de position à la position entrée en paramètre ///
+		/// Puts the position center at the position entered in parameter
 		/// </summary>
 		/// <param name="position">Nouvelle position /// New position</param>
 		void setPosition(const sf::Vector2f& position);
 
 		/// <summary>
-		/// Met le coin supérieur gauche à la position entrée en paramètre ///
-		/// Puts the top left corner at the position entered in parameter
+		/// Met le centre de position à la position entrée en paramètre ///
+		/// Puts the position center at the position entered in parameter
 		/// </summary>
 		/// <param name="x">Nouvelle position horizontale /// New horizontal position</param>
 		/// <param name="y">Nouvelle position verticale /// New vertical position</param>
@@ -324,7 +332,7 @@ namespace opt
 		/// Permet d'accéder à l'adresse de l'objet ///
 		/// Allows to get the address of the object
 		/// </summary>
-		virtual Tile* getThis();
+		//virtual Tile* getThis();
 
 		/// <summary>
 		/// Crée un clone de l'objet qui peut contenir des méthodes dérivées tout comme des membres dérivés. Pour clôner un objet dérivé, surcharger cette méthode ///
@@ -355,19 +363,19 @@ namespace opt
 		/// Changes the tile's colour
 		/// </summary>
 		/// <param name="color">Nouvelle couleur à appliquer /// New colour to apply</param>
-		void changeColour(const sf::Color& colour);
+		void changeColor(const sf::Color& colour);
 
 		/// <summary>
 		/// Réinitialise la couleur de la tuile (met la couleur à 0xFFFFFFFF) ///
 		/// Resets the tile's colour (puts the colour 0xFFFFFFFF)
 		/// </summary>
-		void resetColour();
+		void resetColor();
 
 		/// <summary>
 		/// Retourne la couleur de la tuile ///
 		/// Returns the tile's colour
 		/// </summary>
-		sf::Color getColour() const;
+		sf::Color getColor() const;
 
 		/// <summary>
 		/// Retourne la taille de la tuile ///
@@ -387,10 +395,20 @@ namespace opt
 		/// </summary>
 		std::size_t vertexCount() const;
 
-		/// \brief Change le centre utilisé pour la méthode getPosition. Par exemple, mettre (0.f, 0.f) revient à mettre au coin supérieur gauche
-		/// \param scaleX Proportion par rapport à la largeur
-		/// \param scaleY Proportion par rapport à la hauteur
-		void changePositionCenter(float scaleX, float scaleY);
+		/// <summary>
+		/// Change la position servant de centre pour la tuile en ratio par rapport à sa taille, où 0 correspond à 0% de la valeur et 1 correspond à 100% de la valeur ///
+		/// Changes the position used as center for the tile in ratio from its size, where 0 corresponds to 0% of the value and 1 corresponds to 100% of the value
+		/// </summary>
+		/// <param name="scaleX">Ratio en pourcentage de la largeur de la tuile /// Proportion in percentage of the Tile's width</param>
+		/// <param name="scaleY">Ratio en pourcentage de la hauteur de la tuile /// Proportion in percentage of the Tile's height</param>
+		void setPositionCenter(float scaleX, float scaleY);
+
+		/// <summary>
+		/// Change la position servant de centre pour la tuile en ratio par rapport à sa taille, où 0 correspond à 0% de la valeur et 1 correspond à 100% de la valeur ///
+		/// Changes the position used as center for the tile in ratio from its size, where 0 corresponds to 0% of the value and 1 corresponds to 100% of the value
+		/// </summary>
+		/// <param name="scale">Ratio en pourcentage vertical et horizontal de la tuile /// Vertical and horizontal proportions in percentage of the Tile</param>
+		void setPositionCenter(const sf::Vector2f& scale);
 	};
 }
 #endif 

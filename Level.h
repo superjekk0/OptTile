@@ -483,20 +483,20 @@ namespace opt
 		/// </summary>
 		/// <param name="color">Nouvelle couleur de la tuile (pour appliquer un effet de couleur) /// New tile color (to apply a colour effect)</param>
 		/// <param name="index">Index de la tuile /// Tile index</param>
-		void changeColour(const sf::Color& color, int index);
+		void changeColor(const sf::Color& color, int index);
 
 		/// <summary>
 		/// Réinitialise la couleur des points d'une tuile (remet à la couleur 0xFFFFFFFF)///
 		/// Resets the vertexes' colour of the tile (gets back to colour 0xFFFFFFFF)
 		/// </summary>
 		/// <param name="index">index de la tuile /// Tile index</param>
-		void resetColour(int index);
+		void resetColor(int index);
 
 		/// <summary>
 		/// Retourne la couleur d'une tuile /// Returns tile's colour
 		/// </summary>
 		/// <param name="index">Index de la tuile /// Tile index</param>
-		sf::Color getColour(int index) const;
+		sf::Color getColor(int index) const;
 
 		/// <summary>
 		/// Retourne le rectangle de sous-texture indiqué par l'index ///

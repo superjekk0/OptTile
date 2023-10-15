@@ -11,7 +11,7 @@ void opt::Tile::moveVertexes(int nbVertexes)
 		for (std::size_t i{ m_beginTiles->at(m_tileIndex + 1) }; i < m_vertexes->size(); ++i)
 			m_vertexes->at(i + difference) = m_vertexes->at(i);
 		m_vertexes->resize(m_vertexes->size() - m_tileVertexesCount + nbVertexes);
-		for (std::size_t i{m_tileIndex + 1}; i < m_beginTiles->size(); ++i)
+		for (std::size_t i{ m_tileIndex + 1 }; i < m_beginTiles->size(); ++i)
 			m_beginTiles->at(i) += difference;
 	}
 	else if (difference > 0 && m_tileIndex < m_beginTiles->size() - 1)
@@ -19,7 +19,7 @@ void opt::Tile::moveVertexes(int nbVertexes)
 		m_vertexes->resize(m_vertexes->size() + difference);
 		for (std::size_t i{ m_vertexes->size() - 1 }; i > m_beginTiles->at(m_tileIndex + 1) + difference; --i)
 			m_vertexes->at(i) = m_vertexes->at(i - difference);
-		for (std::size_t i{m_tileIndex + 1}; i < m_beginTiles->size(); ++i)
+		for (std::size_t i{ m_tileIndex + 1 }; i < m_beginTiles->size(); ++i)
 			m_beginTiles->at(i) += difference;
 	}
 	m_tileVertexesCount = nbVertexes;
@@ -45,8 +45,8 @@ void opt::Tile::intializeVertexes()
 
 	sf::Vector2f coinGaucheSommet;
 	std::size_t indexSommet{ m_beginTiles->at(m_tileIndex) };
-	sf::Vector2f textureSize{m_subTextures->at(m_subTextureIndex).width, m_subTextures->at(m_subTextureIndex).height};
-	sf::Vector2f texturePosition{m_subTextures->at(m_subTextureIndex).left, m_subTextures->at(m_subTextureIndex).top};
+	sf::Vector2f textureSize{ m_subTextures->at(m_subTextureIndex).width, m_subTextures->at(m_subTextureIndex).height };
+	sf::Vector2f texturePosition{ m_subTextures->at(m_subTextureIndex).left, m_subTextures->at(m_subTextureIndex).top };
 
 	if (m_textureRule == TextureRule::fill_space)
 	{
@@ -124,7 +124,7 @@ opt::Tile::Tile(std::size_t noTuileDebutTexture, const sf::FloatRect& tileRect, 
 	m_subTextureIndex{ noTuileDebutTexture }, m_textureRule{ textureRule }, m_scale{ scale },
 	m_tileRect{ tileRect }, m_subTextures{ &subTextures }, m_tileVertexesCount{ 0ull },
 	m_beginTiles{ &beginTiles }, m_vertexes{ &vertices },
-	m_tileIndex{ m_beginTiles->size() }, m_colour{ sf::Color(0xFFFFFFFF) }
+	m_tileIndex{ m_beginTiles->size() }, m_colour{ sf::Color(0xFFFFFFFF) }, m_position{ tileRect.getPosition() }
 {
 	m_beginTiles->push_back(m_vertexes->size());
 	intializeVertexes();
@@ -172,11 +172,7 @@ sf::Vector2f opt::Tile::bottomRightCorner() const
 
 sf::Vector2f opt::Tile::getPosition() const
 {
-	sf::Vector2f position {m_tileRect.getPosition()};
-
-	position.x += m_tileRect.width * m_centerPositionScale.x;
-	position.y += m_tileRect.height * m_centerPositionScale.y;
-	return position;
+	return m_position;
 }
 
 void opt::Tile::setScale(const sf::Vector2f& scale)
@@ -211,6 +207,7 @@ void opt::Tile::setScale(const sf::Vector2f& scale)
 		m_tileRect.height *= scale.y;
 		break;
 	}
+	setPositionCenter(m_centerPositionScale);
 	intializeVertexes();
 }
 
@@ -234,6 +231,7 @@ void opt::Tile::setScale(float scale)
 		m_scale *= scale;
 		break;
 	}
+	setPositionCenter(m_centerPositionScale);
 	intializeVertexes();
 }
 
@@ -269,6 +267,7 @@ void opt::Tile::setScale(float x, float y)
 		m_scale.y *= y;
 		break;
 	}
+	setPositionCenter(m_centerPositionScale);
 	intializeVertexes();
 }
 
@@ -316,6 +315,7 @@ void opt::Tile::resize(const sf::Vector2f& size)
 	case TextureRule::keep_size:
 		break;
 	}
+	setPositionCenter(m_centerPositionScale);
 	intializeVertexes();
 }
 
@@ -345,6 +345,7 @@ void opt::Tile::resize(float x, float y)
 	case TextureRule::keep_size:
 		break;
 	}
+	setPositionCenter(m_centerPositionScale);
 	intializeVertexes();
 }
 
@@ -360,23 +361,22 @@ void opt::Tile::resize(float x, float y, TextureRule textureRule)
 	resize(x, y);
 }
 
-void opt::Tile::changeTextureRect(std::size_t numberSubTexture)
+bool opt::Tile::changeTextureRect(std::size_t numberSubTexture)
 {
-	if (numberSubTexture >= 0 && numberSubTexture < m_subTextures->size())
+	if (numberSubTexture >= m_subTextures->size())
+		return false;
+	if (m_subTextures->at(m_subTextureIndex).getSize() == m_subTextures->at(numberSubTexture).getSize())
 	{
-		if (m_subTextures->at(m_subTextureIndex).getSize() == m_subTextures->at(numberSubTexture).getSize())
-		{
-			sf::Vector2f deplacement{ m_subTextures->at(numberSubTexture).getPosition() - m_subTextures->at(m_subTextureIndex).getPosition()};
-			for (int i{ 0 }; i < m_tileVertexesCount; ++i)
-				(*m_vertexes)[i + m_beginTiles->at(m_tileIndex)].texCoords += deplacement;
-		}
-		else
-		{
-			intializeVertexes();
-		}
-		m_subTextureIndex = numberSubTexture;
-		//m_texturePosition = sf::Vector2f(m_textureSize.x / *m_textureCount * m_subTextureIndex, 0.f);
+		sf::Vector2f deplacement{ m_subTextures->at(numberSubTexture).getPosition() - m_subTextures->at(m_subTextureIndex).getPosition() };
+		for (int i{ 0 }; i < m_tileVertexesCount; ++i)
+			(*m_vertexes)[i + m_beginTiles->at(m_tileIndex)].texCoords += deplacement;
 	}
+	else
+	{
+		intializeVertexes();
+	}
+	m_subTextureIndex = numberSubTexture;
+	return true;
 }
 
 void opt::Tile::setTextureRule(TextureRule textureRule)
@@ -393,7 +393,8 @@ void opt::Tile::move(const sf::Vector2f& offset)
 {
 	m_tileRect.left += offset.x;
 	m_tileRect.top += offset.y;
-	for (std::size_t i {0}; i < m_tileVertexesCount; ++i)
+	m_position += offset;
+	for (std::size_t i{ 0 }; i < m_tileVertexesCount; ++i)
 		m_vertexes->at(m_beginTiles->at(m_tileIndex) + i).position += offset;
 }
 
@@ -402,25 +403,28 @@ void opt::Tile::move(float offsetX, float offsetY)
 	m_tileRect.left += offsetX;
 	m_tileRect.top += offsetY;
 	sf::Vector2f offset{ offsetX, offsetY };
-	for (std::size_t i {0}; i < m_tileVertexesCount; ++i)
+	m_position += offset;
+	for (std::size_t i{ 0 }; i < m_tileVertexesCount; ++i)
 		m_vertexes->at(m_beginTiles->at(m_tileIndex) + i).position += offset;
 }
 
 void opt::Tile::setPosition(const sf::Vector2f& position)
 {
-	sf::Vector2f deplacement{position - m_tileRect.getPosition()};
-	m_tileRect.left = position.x;
-	m_tileRect.top = position.y;
-	for (std::size_t i {0}; i < m_tileVertexesCount; ++i)
+	sf::Vector2f deplacement{ position - getPosition() };
+	m_position = position;
+	m_tileRect.left += deplacement.x;
+	m_tileRect.top += deplacement.y;
+	for (std::size_t i{ 0 }; i < m_tileVertexesCount; ++i)
 		m_vertexes->at(m_beginTiles->at(m_tileIndex) + i).position += deplacement;
 }
 
 void opt::Tile::setPosition(float x, float y)
 {
-	sf::Vector2f deplacement{sf::Vector2f(x, y) - m_tileRect.getPosition()};
-	m_tileRect.left = x;
-	m_tileRect.top = y;
-	for (std::size_t i {0}; i < m_tileVertexesCount; ++i)
+	sf::Vector2f deplacement{ sf::Vector2f(x, y) - getPosition() };
+	m_position = sf::Vector2f{ x, y };
+	m_tileRect.left += deplacement.x;
+	m_tileRect.top += deplacement.y;
+	for (std::size_t i{ 0 }; i < m_tileVertexesCount; ++i)
 		m_vertexes->at(m_beginTiles->at(m_tileIndex) + i).position += deplacement;
 }
 
@@ -433,10 +437,10 @@ void opt::Tile::reloadTexture()
 	changeTextureRect(m_subTextureIndex);
 }
 
-opt::Tile* opt::Tile::getThis()
-{
-	return this;
-}
+//opt::Tile* opt::Tile::getThis()
+//{
+//	return this;
+//}
 
 std::unique_ptr<opt::Tile> opt::Tile::clone() const
 {
@@ -458,21 +462,21 @@ sf::Vector2f opt::Tile::subTextureSize() const
 	return sf::Vector2f(m_subTextures->at(m_subTextureIndex).width, m_subTextures->at(m_subTextureIndex).height);
 }
 
-void opt::Tile::changeColour(const sf::Color& colour)
+void opt::Tile::changeColor(const sf::Color& colour)
 {
 	m_colour = colour;
-	for (std::size_t i {0}; i < m_tileVertexesCount; ++i)
+	for (std::size_t i{ 0 }; i < m_tileVertexesCount; ++i)
 		m_vertexes->at(m_beginTiles->at(m_tileIndex) + i).color = m_colour;
 }
 
-void opt::Tile::resetColour()
+void opt::Tile::resetColor()
 {
 	m_colour = sf::Color(0xFFFFFFFF);
-	for (std::size_t i{0}; i < m_tileVertexesCount; ++i)
+	for (std::size_t i{ 0 }; i < m_tileVertexesCount; ++i)
 		m_vertexes->at(m_beginTiles->at(m_tileIndex) + i).color = m_colour;
 }
 
-sf::Color opt::Tile::getColour() const
+sf::Color opt::Tile::getColor() const
 {
 	return m_colour;
 }
@@ -492,7 +496,14 @@ std::size_t opt::Tile::vertexCount() const
 	return m_tileVertexesCount;
 }
 
-void opt::Tile::changePositionCenter(float scaleX, float scaleY)
+void opt::Tile::setPositionCenter(float scaleX, float scaleY)
 {
-	m_centerPositionScale = sf::Vector2f(scaleX, scaleY);
+	m_centerPositionScale = sf::Vector2f{ scaleX, scaleY };
+	m_position = m_tileRect.getPosition() + sf::Vector2f{ m_tileRect.width * scaleX, m_tileRect.height * scaleY };
+}
+
+void opt::Tile::setPositionCenter(const sf::Vector2f& scale)
+{
+	m_centerPositionScale = scale;
+	m_position = m_tileRect.getPosition() + sf::Vector2f{ m_tileRect.width * scale.x, m_tileRect.height * scale.y };
 }
