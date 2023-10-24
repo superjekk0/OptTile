@@ -343,14 +343,14 @@ namespace opt
 		void add(const sf::FloatRect& tileRect, std::size_t numberSubTexture, TextureRule textureRule, Args&&... args, sf::Vector2f scale = sf::Vector2f(1.f, 1.f));
 
 		/// <summary>
-		/// Retourne un pointeur d'un type dérivé ///
-		/// Returns a pointer of a derived object
+		/// Retourne une référence d'un objet de type dérivé ///
+		/// Returns a reference of a derived object
 		/// </summary>
 		/// <typeparam name="T">Type de l'objet dérivé /// Type of the derived object</typeparam>
 		/// <param name="index">Index de l'objet /// Tile index</param>
 		/// <returns>Si null, l'objet n'est pas de ce type /// If null, the object is not this type</returns>
 		template <class T>
-		T* const derivedPointer(std::size_t index);
+		T& derivedTile(std::size_t index);
 
 		/// <summary>
 		/// Retourne une référence constante de la texture utilisée dans le niveau ///
@@ -441,9 +441,9 @@ namespace opt
 	}
 
 	template <class T>
-	inline T* const opt::Level::derivedPointer(std::size_t index)
+	inline T& opt::Level::derivedTile(std::size_t index)
 	{
-		return dynamic_cast<T*>(m_tiles[index].get());
+		return *(dynamic_cast<T*>(m_tiles[index].get()));
 	}
 }
 
