@@ -502,3 +502,19 @@ void opt::Tile::setPositionCenter(const sf::Vector2f& scale)
 	m_centerPositionScale = scale;
 	m_position = m_tileRect.getPosition() + sf::Vector2f{ m_tileRect.width * scale.x, m_tileRect.height * scale.y };
 }
+
+void opt::Tile::rotate(float angle)
+{
+	m_angle = std::modf(m_angle + angle, &m_cercleComplet);
+	
+}
+
+void opt::Tile::setOrientation(float angle)
+{
+	m_angle = std::modf(angle, &m_cercleComplet);
+}
+
+bool opt::Tile::contains(const sf::Vector2f position) const
+{
+	return false;
+}

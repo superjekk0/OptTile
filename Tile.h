@@ -23,19 +23,20 @@
 #include <cmath>
 #include <memory>
 
-//namespace ModTile
-//{
-//	class Position;
-//	class Zoom;
-//	class Couleur;
-//	class Taille;
-//	class Centre;
-//}
-//
-//namespace ModLevel 
-//{
-//	class AjoutTile;
-//}
+namespace ModTile
+{
+	class Position;
+	class Zoom;
+	class Couleur;
+	class Taille;
+	class Centre;
+	class Angle;
+}
+
+namespace ModLevel 
+{
+	class AjoutTile;
+}
 
 namespace opt
 {
@@ -78,12 +79,13 @@ namespace opt
 		void moveVertexes(int nbVertexes);
 
 		// À enlever une fois les tests terminés
-		//friend class ModTile::Centre;
-		//friend class ModTile::Couleur;
-		//friend class ModTile::Position;
-		//friend class ModTile::Taille;
-		//friend class ModTile::Zoom;
-		//friend class ModLevel::AjoutTile;
+		friend class ModTile::Centre;
+		friend class ModTile::Couleur;
+		friend class ModTile::Position;
+		friend class ModTile::Taille;
+		friend class ModTile::Zoom;
+		friend class ModTile::Angle;
+		friend class ModLevel::AjoutTile;
 
 		// Donne le rectangle de taille et de position de la tuile ///
 		// Give the tile's rectangle for its size and its position											
@@ -121,6 +123,11 @@ namespace opt
 		// Indique l'échelle de position par rapport au coin supérieur gauche de la tuile ///
 		// Indicates the position scale center from in the tile
 		sf::Vector2f m_centerPositionScale{0.f, 0.f};
+		// Indique l'orientation de la tuile ///
+		// Indicates the tile's orientation
+		float m_angle;
+
+		float m_cercleComplet{360.f};	// Indique la valeur d'un cercle complet en degrés
 	protected:
 
 		void intializeVertexes();
@@ -417,6 +424,28 @@ namespace opt
 		/// </summary>
 		/// <param name="scale">Ratio en pourcentage vertical et horizontal de la tuile /// Vertical and horizontal proportions in percentage of the Tile</param>
 		void setPositionCenter(const sf::Vector2f& scale);
+
+		/// <summary>
+		/// Fait une rotation de la tuile ///
+		/// Makes a rotation of the tile
+		/// </summary>
+		/// <param name="angle">Valeur en degrés à additionner à l'angle de la tuile /// Value in degrees to add to the Tile's angle</param>
+		void rotate(float angle);
+
+		/// <summary>
+		/// Met la tuile à l'orientation en degrés à la valeur demandée ///
+		/// Puts the tile at the specified angle in degrees
+		/// </summary>
+		/// <param name="angle">Valeur d'orientation en degrés /// Orientation value in degrees</param>
+		void setOrientation(float angle);
+
+		/// <summary>
+		/// Indique si la surface de la tuile contient la position entrée en paramètre ///
+		/// Indicates if the tile's area contains the position entered in parameter
+		/// </summary>
+		/// <param name="position">Position à vérifier /// Position to check</param>
+		/// <returns>Si vrai, la position se trouve dans la tuile /// If true, the position is inside the Tile</returns>
+		bool contains(const sf::Vector2f position) const;
 	};
 }
 #endif 
