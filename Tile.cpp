@@ -43,7 +43,6 @@ void opt::Tile::intializeVertexes()
 		return;
 	}
 
-	sf::Vector2f coinGaucheSommet;
 	std::size_t indexSommet{ m_beginTiles->at(m_tileIndex) };
 	sf::Vector2f textureSize{ m_subTextures->at(m_subTextureIndex).width, m_subTextures->at(m_subTextureIndex).height };
 	sf::Vector2f texturePosition{ m_subTextures->at(m_subTextureIndex).left, m_subTextures->at(m_subTextureIndex).top };
@@ -60,10 +59,9 @@ void opt::Tile::intializeVertexes()
 	moveVertexes(nbVertexes);
 
 	// En théorie, l'index devrait coïncider avec la taille
-	while (coinGaucheSommet.y < m_tileRect.height)
+	for (sf::Vector2f coinGaucheSommet; coinGaucheSommet.y < m_tileRect.height; coinGaucheSommet.y += textureSize.y * m_scale.y)
 	{
-		coinGaucheSommet.x = 0.f;
-		for (; coinGaucheSommet.x < m_tileRect.width; coinGaucheSommet.x += textureSize.x * m_scale.x, indexSommet += 6)
+		for (coinGaucheSommet.x = 0.f; coinGaucheSommet.x < m_tileRect.width; coinGaucheSommet.x += textureSize.x * m_scale.x, indexSommet += 6)
 		{
 			(*m_vertexes)[indexSommet].position = coinGaucheSommet;
 			(*m_vertexes)[indexSommet].texCoords = sf::Vector2f(texturePosition.x, 0.f);
@@ -97,7 +95,6 @@ void opt::Tile::intializeVertexes()
 			(*m_vertexes)[indexSommet + 5].texCoords = sf::Vector2f((*m_vertexes)[indexSommet + 4].texCoords.x, (*m_vertexes)[indexSommet + 3].texCoords.y);
 
 		}
-		coinGaucheSommet.y += textureSize.y * m_scale.y;
 	}
 
 	for (unsigned long long i{ 0 }; i < m_tileVertexesCount; ++i)
@@ -105,6 +102,18 @@ void opt::Tile::intializeVertexes()
 		m_vertexes->at(m_beginTiles->at(m_tileIndex) + i).position += m_tileRect.getPosition();
 		m_vertexes->at(m_beginTiles->at(m_tileIndex) + i).color = m_colour;
 	}
+}
+
+void opt::Tile::updateSummits()
+{
+	float angleComplementaire{ m_angle * rad }; // Angle extérieur du rectangle
+	sf::Vector2f deplacementCoinGauche { m_tileRect.height * std::cosf(angleComplementaire),
+		m_tileRect.height * std::sinf(angleComplementaire) };
+	sf::Vector2f deplacement { m_tileRect.width * std::cosf(angleComplementaire), m_tileRect.width * -std::sinf(angleComplementaire) };
+
+	m_topRight = m_tileRect.getPosition() + deplacement;
+	m_bottomLeft = m_tileRect.getPosition() + (static_cast<int>(m_angle / 90.f) % 2 == 0 ? deplacementCoinGauche : -deplacementCoinGauche);
+	m_bottomRight = m_bottomLeft + deplacement;
 }
 
 opt::Tile::Tile() : m_subTextureIndex{ 0ull }, m_textureRule{ TextureRule::repeat_texture },
@@ -124,7 +133,9 @@ opt::Tile::Tile(std::size_t noTuileDebutTexture, const sf::FloatRect& tileRect, 
 	m_subTextureIndex{ noTuileDebutTexture }, m_textureRule{ textureRule }, m_scale{ scale },
 	m_tileRect{ tileRect }, m_subTextures{ &subTextures }, m_tileVertexesCount{ 0ull },
 	m_beginTiles{ &beginTiles }, m_vertexes{ &vertices },
-	m_tileIndex{ m_beginTiles->size() }, m_colour{ sf::Color(0xFFFFFFFF) }, m_position{ tileRect.getPosition() }
+	m_tileIndex{ m_beginTiles->size() }, m_colour{ sf::Color(0xFFFFFFFF) }, m_position{ tileRect.getPosition() },
+	m_topRight { tileRect.getPosition() + sf::Vector2f(tileRect.width, 0.f) }, m_bottomLeft { tileRect.getPosition() + sf::Vector2f(0.f, tileRect.height) },
+	m_bottomRight {tileRect.getPosition() + tileRect.getSize() }
 {
 	m_beginTiles->push_back(m_vertexes->size());
 	intializeVertexes();
@@ -157,17 +168,17 @@ sf::Vector2f opt::Tile::topLeftCorner() const
 
 sf::Vector2f opt::Tile::topRightCorner() const
 {
-	return m_tileRect.getPosition() + sf::Vector2f(this->width(), 0.f);
+	return m_topRight;
 }
 
 sf::Vector2f opt::Tile::bottomLeftCorner() const
 {
-	return m_tileRect.getPosition() + sf::Vector2f(0.f, this->height());
+	return m_bottomLeft;
 }
 
 sf::Vector2f opt::Tile::bottomRightCorner() const
 {
-	return m_tileRect.getPosition() + m_tileRect.getSize();
+	return m_bottomRight;
 }
 
 sf::Vector2f opt::Tile::getPosition() const
@@ -505,13 +516,16 @@ void opt::Tile::setPositionCenter(const sf::Vector2f& scale)
 
 void opt::Tile::rotate(float angle)
 {
-	m_angle = std::modf(m_angle + angle, &m_cercleComplet);
-	
+	m_angle = std::fmodf(m_angle + angle, m_cercleComplet);
+	updateSummits();
+	intializeVertexes();
 }
 
 void opt::Tile::setOrientation(float angle)
 {
-	m_angle = std::modf(angle, &m_cercleComplet);
+	m_angle = std::fmodf(angle, m_cercleComplet);
+	updateSummits();
+	intializeVertexes();
 }
 
 bool opt::Tile::contains(const sf::Vector2f position) const

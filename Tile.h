@@ -78,6 +78,10 @@ namespace opt
 		/// <param name="nbVertexes">Nombre de sommets dans la tuile /// Number of vertexes inside Tile</param>
 		void moveVertexes(int nbVertexes);
 
+		constexpr static float pi {3.14159265f};
+		// Transforme les degrés en radians /// Transforms degrees in radians
+		constexpr static float rad {pi / 180.f};
+
 		// À enlever une fois les tests terminés
 		friend class ModTile::Centre;
 		friend class ModTile::Couleur;
@@ -125,12 +129,26 @@ namespace opt
 		sf::Vector2f m_centerPositionScale{0.f, 0.f};
 		// Indique l'orientation de la tuile ///
 		// Indicates the tile's orientation
-		float m_angle;
+		float m_angle{ 0.f };
 
-		float m_cercleComplet{360.f};	// Indique la valeur d'un cercle complet en degrés
+		sf::Vector2f m_topRight;
+		sf::Vector2f m_bottomLeft;
+		sf::Vector2f m_bottomRight;
+
+		constexpr static float m_cercleComplet{360.f};	// Indique la valeur d'un cercle complet en degrés
 	protected:
 
+		/// <summary>
+		/// S'occupe de mettre à jour les sommets de la tuile ///
+		/// Updates the tile's vertexes
+		/// </summary>
 		void intializeVertexes();
+
+		/// <summary>
+		/// Met à jour les sommets de la tuile selon les nouveaux paramètres ///
+		/// Updates the tile's vertexes according to the new parameters
+		/// </summary>
+		void updateSummits();
 	public:
 
 		/// <summary>
