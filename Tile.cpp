@@ -107,12 +107,25 @@ void opt::Tile::intializeVertexes()
 void opt::Tile::updateSummits()
 {
 	float angleComplementaire{ m_angle * rad }; // Angle extérieur du rectangle
-	sf::Vector2f deplacementCoinGauche { m_tileRect.height * std::cosf(angleComplementaire),
-		m_tileRect.height * std::sinf(angleComplementaire) };
-	sf::Vector2f deplacement { m_tileRect.width * std::cosf(angleComplementaire), m_tileRect.width * -std::sinf(angleComplementaire) };
+	sf::Vector2f deplacementCoinGauche { m_tileRect.height * std::cosf(angleComplementaire), // Déplacement entre le coin supérieur gauche et le coin inférieur gauche
+		m_tileRect.height * std::sinf(angleComplementaire) }; 
+	sf::Vector2f deplacement { m_tileRect.width * std::cosf(angleComplementaire),
+		m_tileRect.width * -std::sinf(angleComplementaire) };
 
+	switch (static_cast<int>(m_angle / 90.f))
+	{
+	case 0:
+	case 2:
+	case 3:
+		m_bottomLeft = m_tileRect.getPosition() + deplacementCoinGauche;
+		break;
+	case 1:
+		m_bottomLeft = m_tileRect.getPosition() - deplacementCoinGauche;
+		break;
+	default:
+		break;
+	}
 	m_topRight = m_tileRect.getPosition() + deplacement;
-	m_bottomLeft = m_tileRect.getPosition() + (static_cast<int>(m_angle / 90.f) % 2 == 0 ? deplacementCoinGauche : -deplacementCoinGauche);
 	m_bottomRight = m_bottomLeft + deplacement;
 }
 
