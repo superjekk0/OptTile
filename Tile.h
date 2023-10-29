@@ -78,6 +78,13 @@ namespace opt
 		/// <param name="nbVertexes">Nombre de sommets dans la tuile /// Number of vertexes inside Tile</param>
 		void moveVertexes(int nbVertexes);
 
+		/// <summary>
+		/// Applique la rotation à l'angle indiqué à un des sommets de la tuile ///
+		/// Applies the rotation to the angle indicated to one of the tile's vertexes
+		/// </summary>
+		/// <param name="vertex">Sommet à tourner /// Vertex to rotate</param>
+		sf::Vector2f rotateVertex(const sf::Vector2f& vertex, bool invertY);
+
 		constexpr static float pi {3.14159265f};
 		// Transforme les degrés en radians /// Transforms degrees in radians
 		constexpr static float rad {pi / 180.f};

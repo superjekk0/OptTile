@@ -25,6 +25,16 @@ void opt::Tile::moveVertexes(int nbVertexes)
 	m_tileVertexesCount = nbVertexes;
 }
 
+sf::Vector2f opt::Tile::rotateVertex(const sf::Vector2f& vertex, bool invertY)
+{
+	static sf::Vector2f resultat;
+	resultat.x = vertex.x * std::cosf(m_angle * rad) + vertex.y * std::sinf(m_angle * rad);
+	resultat.y = (vertex.x * std::sinf(m_angle * rad) + vertex.y * std::cosf(m_angle * rad));
+	if (invertY)
+		resultat.y = -resultat.y;
+	return resultat;
+}
+
 void opt::Tile::intializeVertexes()
 {
 	if (!m_subTextures || m_tileRect.getSize() == sf::Vector2f())
@@ -106,27 +116,34 @@ void opt::Tile::intializeVertexes()
 
 void opt::Tile::updateSummits()
 {
-	float angleComplementaire{ m_angle * rad }; // Angle extérieur du rectangle
-	sf::Vector2f deplacementCoinGauche { m_tileRect.height * std::cosf(angleComplementaire), // Déplacement entre le coin supérieur gauche et le coin inférieur gauche
-		m_tileRect.height * std::sinf(angleComplementaire) }; 
-	sf::Vector2f deplacement { m_tileRect.width * std::cosf(angleComplementaire),
-		m_tileRect.width * -std::sinf(angleComplementaire) };
+	//// TODO : Mettre des valeurs spéciales pour les angles de 0, 90, 180 et 270 degrés
+	//float angleComplementaire{ m_angle * rad }; // Angle extérieur du rectangle
+	//sf::Vector2f deplacementCoinGauche { m_tileRect.height * std::cosf(angleComplementaire), // Déplacement entre le coin supérieur gauche et le coin inférieur gauche
+	//	m_tileRect.height * std::sinf(angleComplementaire) }; 
+	//sf::Vector2f deplacement { m_tileRect.width * std::cosf(angleComplementaire),
+	//	m_tileRect.width * -std::sinf(angleComplementaire) };
 
+	//m_topRight = m_tileRect.getPosition() + deplacement;
+	//m_bottomRight = m_bottomLeft + deplacement;
+	m_topRight = rotateVertex(m_topRight, true);
+	sf::Vector2f deplacementLongueur{ m_topRight - m_tileRect.getPosition() };
+	
 	switch (static_cast<int>(m_angle / 90.f))
 	{
 	case 0:
-	case 2:
-	case 3:
-		m_bottomLeft = m_tileRect.getPosition() + deplacementCoinGauche;
-		break;
 	case 1:
-		m_bottomLeft = m_tileRect.getPosition() - deplacementCoinGauche;
+	case 2:
+		m_bottomLeft = rotateVertex(m_bottomLeft, false);
+		break;
+	case 3:
+		m_bottomLeft = -rotateVertex(m_bottomLeft, false);
 		break;
 	default:
 		break;
 	}
-	m_topRight = m_tileRect.getPosition() + deplacement;
-	m_bottomRight = m_bottomLeft + deplacement;
+
+	m_bottomRight = m_bottomLeft + deplacementLongueur;
+	
 }
 
 opt::Tile::Tile() : m_subTextureIndex{ 0ull }, m_textureRule{ TextureRule::repeat_texture },
