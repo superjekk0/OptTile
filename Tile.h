@@ -104,6 +104,35 @@ namespace opt
 		LinearFunc(const sf::Vector2f& point1, const sf::Vector2f& point2);
 
 		/// <summary>
+		/// Change l'ordonnée à l'origine de la fonction en prenant comme référence le point en paramètre. Si la fonction est une constante en X, l'abscice est modifiée ///
+		/// Changes the y-intercept of the function using the point in parameter as reference. If the function is constant in X, the abscissa is modified
+		/// </summary>
+		/// <param name="point">Point de référence /// Reference point</param>
+		void changeYIntercept(const sf::Vector2f& point);
+
+		/// <summary>
+		/// Change l'ordonnée à l'orgine de la fonction ///
+		/// Changes the y-intercept of the function
+		/// </summary>
+		/// <param name="yIntercept">Nouvelle ordonnée à l'origine /// New Y-intercept</param>
+		void changeYIntercept(float yIntercept);
+
+		/// <summary>
+		/// Change la pente de la fonction. Si la fonction est constante en X, l'abscice est modifiée ///
+		/// Changes the slope of the function. If the function is constant in X, the abscissa is modified
+		/// </summary>
+		/// <param name="point1">Nouveau point de référence contenant les valeurs x1 et y1 /// New reference point containing values x1 and y1</param>
+		/// <param name="point2">Nouveau point de référence contenant les valeurs x2 et y2 /// New reference point containing values x2 and y2</param>
+		void changeSlope(const sf::Vector2f& point1, const sf::Vector2f& point2);
+
+		/// <summary>
+		/// Change la pente de la fonction. Si la fonction est constante en X, l'abscice est modifiée ///
+		/// Changes the slope of the function. If the function is constant in X, the abscissa is modified
+		/// </summary>
+		/// <param name="newA">Nouveau paramètre a /// New parameter a</param>
+		void changeSlope(float newA);
+
+		/// <summary>
 		/// Indique si le point se trouve exactement dans la fonction. Correspond y = a * x + b ///
 		/// Indicates if the point is exactly inside the function. Corresponds to y = a * x + b
 		/// </summary>

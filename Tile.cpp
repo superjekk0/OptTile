@@ -590,6 +590,38 @@ opt::LinearFunc::LinearFunc(const sf::Vector2f& point1, const sf::Vector2f& poin
 	constantX = false;
 }
 
+void opt::LinearFunc::changeYIntercept(const sf::Vector2f& point)
+{
+	if (constantX)
+		a = point.x;
+	else
+		b = point.y - a * point.x;
+}
+
+void opt::LinearFunc::changeYIntercept(float yIntercept)
+{
+	if (!constantX)
+		b = yIntercept;
+}
+
+void opt::LinearFunc::changeSlope(const sf::Vector2f& point1, const sf::Vector2f& point2)
+{
+	if (constantX)
+	{
+		a = point1.x;
+	}
+	else
+	{
+		a = (point2.y - point1.y) / (point2.x - point1.x);
+		b = point1.y - a * point1.x;
+	}
+}
+
+void opt::LinearFunc::changeSlope(float newA)
+{
+	a = newA;
+}
+
 bool opt::LinearFunc::operator==(const sf::Vector2f& point) const
 {
 	return (constantX ? point.x == a : point.y == a * point.x + b);
