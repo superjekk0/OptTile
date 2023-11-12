@@ -557,7 +557,65 @@ void opt::Tile::setOrientation(float angle)
 	intializeVertexes();
 }
 
-bool opt::Tile::contains(const sf::Vector2f position) const
+bool opt::Tile::intersects(const sf::Vector2f& position) const
 {
 	return false;
+}
+
+opt::LinearFunc::LinearFunc()
+{
+	a = 1.f;
+	b = 0.f;
+	constantX = false;
+}
+
+opt::LinearFunc::LinearFunc(float a, float b, bool constantX)
+{
+	this->a = a;
+	this->b = b;
+	this->constantX = constantX;
+}
+
+opt::LinearFunc::LinearFunc(const sf::Vector2f& point1, const sf::Vector2f& point2)
+{
+	if (point2.x == point1.x)
+	{
+		a = point1.x;
+		b = 0.f;
+		constantX = true;
+		return;
+	}
+	a = (point2.y - point1.y) / (point2.x - point1.x);
+	b = point1.y - a * point1.x;
+	constantX = false;
+}
+
+bool opt::LinearFunc::operator==(const sf::Vector2f& point) const
+{
+	return (constantX ? point.x == a : point.y == a * point.x + b);
+}
+
+bool opt::LinearFunc::operator==(const LinearFunc& other) const
+{
+	return this->a == other.a && this->b == other.b && this->constantX == other.constantX;
+}
+
+bool opt::LinearFunc::operator<(const sf::Vector2f& point) const
+{
+	return (constantX ? point.x < a : point.y < a * point.y + b);
+}
+
+bool opt::LinearFunc::operator<=(const sf::Vector2f& point) const
+{
+	return (constantX ? point.x <= a : point.y <= a * point.y + b);
+}
+
+bool opt::LinearFunc::operator>(const sf::Vector2f& point) const
+{
+	return (constantX ? point.x > a : point.y > a * point.y + b);
+}
+
+bool opt::LinearFunc::operator>=(const sf::Vector2f& point) const
+{
+	return (constantX ? point.x >= a : point.y >= a * point.y + b);
 }

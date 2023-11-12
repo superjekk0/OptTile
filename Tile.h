@@ -66,6 +66,87 @@ namespace opt
 	};
 
 	/// <summary>
+	/// Permet de faire une représentation d'une fonction affine à l'aide de la formule y = ax + b ///
+	/// Allows to make a representation of a linear function using the formula y = ax + b
+	/// </summary>
+	struct OPTTILE_API LinearFunc {
+		// Pente de la fonction
+		// Slope of the function
+		float a;
+		// Ordonnée à l'origine
+		// Y-intercept
+		float b;
+		// Indique si la fonction est constante en x. Dans ce cas, a devient la valeur en X
+		// Indicates if the function is constant in x. In this case, a becomes the value in X
+		bool constantX;
+
+		/// <summary>
+		/// Crée une fonction affine de base de la forme y = x ///
+		/// Creates a basic linear function of the form y = x
+		/// </summary>
+		LinearFunc();
+
+		/// <summary>
+		/// Crée une fonction affine avec les paramètres ///
+		/// Creates a linear function with the parameters
+		/// </summary>
+		/// <param name="a">Pente de la fonction /// Slope of the function</param>
+		/// <param name="b">Ordonnée à l'origine /// Y-intercept value</param>
+		/// <param name="constantX">Indique s'il s'agit d'une fonction du genre x = a</param>
+		LinearFunc(float a, float b, bool constantX);
+
+		/// <summary>
+		/// Crée une fonction affine à partir de deux points ///
+		/// Creates a linear function from two points
+		/// </summary>
+		/// <param name="point1">Premier point. Contient x1 et y1 /// First point. Contains x1 and y1</param>
+		/// <param name="point2">Deuxième point. Contient x2 et y2 /// Second point. Contains x2 and y2</param>
+		LinearFunc(const sf::Vector2f& point1, const sf::Vector2f& point2);
+
+		/// <summary>
+		/// Indique si le point se trouve exactement dans la fonction. Correspond y = a * x + b ///
+		/// Indicates if the point is exactly inside the function. Corresponds to y = a * x + b
+		/// </summary>
+		/// <param name="point">Point à vérifier /// Point to verify</param>
+		bool operator==(const sf::Vector2f& point) const;
+
+		/// <summary>
+		/// Vérifie si les deux fonctions sont égales ///
+		/// Checks if the two functions are equal
+		/// </summary>
+		/// <param name="func">Autre fonction à vérifier</param>
+		bool operator==(const LinearFunc& func) const;
+
+		/// <summary>
+		/// Vérifie l'inéquation de la fonction correspondant à y < a * x + b ///
+		/// Checks the inequation of the function corresponding to y < a * x + b
+		/// </summary>
+		/// <param name="point">Point de référence de l'inéquation</param>
+		bool operator<(const sf::Vector2f& point) const;
+
+		/// <summary>
+		/// Vérifie l'inéquation de la fonction correspondant à y <= a * x + b ///
+		/// Checks the inequation of the function corresponding to y <= a * x + b
+		/// </summary>
+		/// <param name="point">Point de référence de l'inéquation</param>
+		bool operator<=(const sf::Vector2f& point) const;
+
+		/// <summary>
+		/// Vérifie l'inéquation de la fonction correspondant à y > a * x + b ///
+		/// Checks the inequation of the function corresponding to y > a * x + b
+		/// </summary>
+		/// <param name="point">Point de référence de l'inéquation</param>
+		bool operator>(const sf::Vector2f& point) const;
+
+		/// <summary>
+		/// Vérifie l'inéquation de la fonction correspondant à y >= a * x + b ///
+		/// Checks the inequation of the function corresponding to y >= a * x + b
+		/// </summary>
+		/// <param name="point">Point de référence de l'inéquation</param>
+		bool operator>=(const sf::Vector2f& point) const;
+	};
+
+	/// <summary>
 	/// Objet permettant d'encapsuler certains éléments SFML. Nécessite cependant un objet autre pour pouvoir être dessiné, tel que opt::Level ///
 	/// Object allowing to wrap a few SFML-linked inside this class. Needs however another object to be drawn, such as opt::Level
 	/// </summary>
@@ -470,9 +551,7 @@ namespace opt
 		/// </summary>
 		/// <param name="position">Position à vérifier /// Position to check</param>
 		/// <returns>Si vrai, la position se trouve dans la tuile /// If true, the position is inside the Tile</returns>
-		bool contains(const sf::Vector2f position) const;
+		bool intersects(const sf::Vector2f& position) const;
 	};
 }
 #endif 
-
-
