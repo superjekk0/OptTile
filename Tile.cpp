@@ -54,6 +54,7 @@ void opt::Tile::intializeVertexes()
 	}
 
 	std::size_t indexSommet{ m_beginTiles->at(m_tileIndex) };
+	const std::size_t debutTuile { m_beginTiles->at(m_tileIndex) };
 	sf::Vector2f textureSize{ m_subTextures->at(m_subTextureIndex).width, m_subTextures->at(m_subTextureIndex).height };
 	sf::Vector2f texturePosition{ m_subTextures->at(m_subTextureIndex).left, m_subTextures->at(m_subTextureIndex).top };
 
@@ -63,87 +64,85 @@ void opt::Tile::intializeVertexes()
 		m_scale.y = m_tileRect.height / textureSize.y;
 	}
 
-	const int nbVertexes{ static_cast<int>(std::ceil(m_tileRect.width / (m_subTextures->at(m_subTextureIndex).width * m_scale.x))
-		* std::ceil(m_tileRect.height / (m_subTextures->at(m_subTextureIndex).height * m_scale.y))
-		* 6) }; // Pourquoi on multiplie par 6? Car il faut 6 sommets pour faire un carré de tuile
+	const int nbSommetsLongueur{ static_cast<int>(std::ceil(m_tileRect.width / (textureSize.x * m_scale.x))) * 6 }; // Pourquoi on multiplie par 6? Car il faut 6 sommets pour faire un carré de tuile
+	const int nbVertexes{ static_cast<int>
+		(std::ceil(m_tileRect.height / (m_subTextures->at(m_subTextureIndex).height * m_scale.y))) * nbSommetsLongueur }; 
 	moveVertexes(nbVertexes);
+	static sf::Vector2f deplacementLongueur;
 
 	// En théorie, l'index devrait coïncider avec la taille
+
+	// TODO : Investiguer la cause de la distortion dans un vrai programme
 	for (sf::Vector2f coinGaucheSommet; coinGaucheSommet.y < m_tileRect.height; coinGaucheSommet.y += textureSize.y * m_scale.y)
 	{
 		for (coinGaucheSommet.x = 0.f; coinGaucheSommet.x < m_tileRect.width; coinGaucheSommet.x += textureSize.x * m_scale.x, indexSommet += 6)
 		{
-			(*m_vertexes)[indexSommet].position = coinGaucheSommet;
+			if (indexSommet < debutTuile + 6)
+				// On commence à partir du début
+				(*m_vertexes)[indexSommet].position = coinGaucheSommet;
+			else if (coinGaucheSommet.x == 0.f)
+				// On prend le sommet à partir du coin gauche inférieur du carré de tuile parallèle plus haut
+				(*m_vertexes)[indexSommet].position = (*m_vertexes)[indexSommet - nbSommetsLongueur + 1].position;
+			else
+				// On prend le sommet à partir du coin supérieur droit de la tuile précédente
+				(*m_vertexes)[indexSommet].position = (*m_vertexes)[indexSommet - 4].position;
 			(*m_vertexes)[indexSommet].texCoords = sf::Vector2f(texturePosition.x, 0.f);
 
+			// Coin inférieur gauche
 			if (coinGaucheSommet.y + textureSize.y * m_scale.y > m_tileRect.height)
 			{
-				(*m_vertexes)[indexSommet + 1].position = coinGaucheSommet + sf::Vector2f(0.f, m_tileRect.height - coinGaucheSommet.y);
+				(*m_vertexes)[indexSommet + 1].position = (*m_vertexes)[indexSommet].position + rotateVertex(static_cast<int>(m_angle / 90.f) == 3 ?
+					-(sf::Vector2f(0.f, m_tileRect.height - coinGaucheSommet.y)) :
+					sf::Vector2f(0.f, m_tileRect.height - coinGaucheSommet.y), false);
 				(*m_vertexes)[indexSommet + 1].texCoords = sf::Vector2f(texturePosition.x, m_tileRect.height - coinGaucheSommet.y);
 			}
 			else
 			{
-				(*m_vertexes)[indexSommet + 1].position = coinGaucheSommet + sf::Vector2f(0.f, textureSize.y * m_scale.y);
+				(*m_vertexes)[indexSommet + 1].position = (*m_vertexes)[indexSommet].position + rotateVertex(static_cast<int>(m_angle / 90.f) == 3 ?
+					-(sf::Vector2f(0.f, textureSize.y * m_scale.y)) :
+					 sf::Vector2f(0.f, textureSize.y * m_scale.y), false);
 				(*m_vertexes)[indexSommet + 1].texCoords = sf::Vector2f(texturePosition.x, textureSize.y);
 			}
 
+			// Coin supérieur droit
 			if (coinGaucheSommet.x + textureSize.x * m_scale.x > m_tileRect.width)
 			{
-				(*m_vertexes)[indexSommet + 2].position = coinGaucheSommet + sf::Vector2f(m_tileRect.width - coinGaucheSommet.x, 0.f);
+				(*m_vertexes)[indexSommet + 2].position = (*m_vertexes)[indexSommet].position + rotateVertex(sf::Vector2f(m_tileRect.width - coinGaucheSommet.x, 0.f), true);
 				(*m_vertexes)[indexSommet + 2].texCoords = sf::Vector2f(texturePosition.x + (m_tileRect.width - coinGaucheSommet.x), 0.f);
 			}
 			else
 			{
-				(*m_vertexes)[indexSommet + 2].position = coinGaucheSommet + sf::Vector2f(textureSize.x * m_scale.x, 0.f);
+				(*m_vertexes)[indexSommet + 2].position = (*m_vertexes)[indexSommet].position + rotateVertex(sf::Vector2f(textureSize.x * m_scale.x, 0.f), true);
 				(*m_vertexes)[indexSommet + 2].texCoords = sf::Vector2f(texturePosition.x + textureSize.x - 1.f, 0.f);
 			}
+
+			deplacementLongueur = (*m_vertexes)[indexSommet + 2].position - (*m_vertexes)[indexSommet].position;
 
 			(*m_vertexes)[indexSommet + 3] = (*m_vertexes)[indexSommet + 1];
 			(*m_vertexes)[indexSommet + 4] = (*m_vertexes)[indexSommet + 2];
 
-			(*m_vertexes)[indexSommet + 5].position = sf::Vector2f((*m_vertexes)[indexSommet + 4].position.x, (*m_vertexes)[indexSommet + 3].position.y);
+			// Coin inférieur droit
+			(*m_vertexes)[indexSommet + 5].position = (*m_vertexes)[indexSommet + 3].position + deplacementLongueur;
 			(*m_vertexes)[indexSommet + 5].texCoords = sf::Vector2f((*m_vertexes)[indexSommet + 4].texCoords.x, (*m_vertexes)[indexSommet + 3].texCoords.y);
 
 		}
 	}
 
-	for (unsigned long long i{ 0 }; i < m_tileVertexesCount; ++i)
+	for (std::size_t i{ 0 }; i < m_tileVertexesCount; ++i)
 	{
-		m_vertexes->at(m_beginTiles->at(m_tileIndex) + i).position += m_tileRect.getPosition();
-		m_vertexes->at(m_beginTiles->at(m_tileIndex) + i).color = m_colour;
+		(*m_vertexes)[i + debutTuile].position += m_tileRect.getPosition();
+		(*m_vertexes)[i + debutTuile].color = m_colour;
 	}
 }
 
 void opt::Tile::updateSummits()
 {
-	//// TODO : Mettre des valeurs spéciales pour les angles de 0, 90, 180 et 270 degrés
-	//float angleComplementaire{ m_angle * rad }; // Angle extérieur du rectangle
-	//sf::Vector2f deplacementCoinGauche { m_tileRect.height * std::cosf(angleComplementaire), // Déplacement entre le coin supérieur gauche et le coin inférieur gauche
-	//	m_tileRect.height * std::sinf(angleComplementaire) }; 
-	//sf::Vector2f deplacement { m_tileRect.width * std::cosf(angleComplementaire),
-	//	m_tileRect.width * -std::sinf(angleComplementaire) };
-
-	//m_topRight = m_tileRect.getPosition() + deplacement;
-	//m_bottomRight = m_bottomLeft + deplacement;
 	m_topRight = rotateVertex(m_topRight, true);
 	sf::Vector2f deplacementLongueur{ m_topRight - m_tileRect.getPosition() };
 	
-	switch (static_cast<int>(m_angle / 90.f))
-	{
-	case 0:
-	case 1:
-	case 2:
-		m_bottomLeft = rotateVertex(m_bottomLeft, false);
-		break;
-	case 3:
-		m_bottomLeft = -rotateVertex(m_bottomLeft, false);
-		break;
-	default:
-		break;
-	}
+	m_bottomLeft = rotateVertex((static_cast<int>(m_angle / 90.f ) == 3 ? -m_bottomLeft : m_bottomLeft), false);
 
 	m_bottomRight = m_bottomLeft + deplacementLongueur;
-	
 }
 
 opt::Tile::Tile() : m_subTextureIndex{ 0ull }, m_textureRule{ TextureRule::repeat_texture },
